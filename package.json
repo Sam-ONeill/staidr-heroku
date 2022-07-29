@@ -27,5 +27,8 @@
     "bufferutil": "^4.0.6",
     "utf-8-validate": "^5.0.9"
   },
+  "engines": {
+    "node": "18.4.0"
+  },
   "proxy": "http://localhost:4000"
 }
