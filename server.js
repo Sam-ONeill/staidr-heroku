@@ -2,11 +2,10 @@ const https = require('https');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const fs = require('fs');
 
 require('dotenv').config();
 const app = express();
-const port = process.env.PORT || 4000;
+const port = 4000;
 // Connect to the database
 app.use(cors({origin: true}));
 app.use(express.json());
@@ -18,18 +17,8 @@ mongoose
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
 
-https
-  .createServer(
-    {
-      /*
-      key: fs.readFileSync('./certification/server.key'),
-      cert: fs.readFileSync('./certification/server.cert'),
 
-       */
-    },
-    app,
-  )
-  .listen(port, function () {
+  app.listen(port, function () {
     console.log('Server is running on Port: ' + port);
   });
 /*
