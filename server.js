@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 require('dotenv').config();
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 // Connect to the database
 app.use(cors({origin: true}));
 app.use(express.json());
