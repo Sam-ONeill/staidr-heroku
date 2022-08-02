@@ -38,4 +38,3 @@ io.on('connection', socket => {
 });
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 
-node_server.listen(3000);
