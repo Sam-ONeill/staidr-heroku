@@ -18,7 +18,8 @@ mongoose
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
-
+const socket_test = require('./routes/socketTest');
+app.use('/test', socket_test);
 // Initialise node HTTPS server
 const node_server = https.createServer(app)
     node_server.listen(port, function () {
@@ -27,6 +28,7 @@ const node_server = https.createServer(app)
 
 //Begin SocketIO init
 const socket = require("socket.io");
+const {response} = require("express");
 
 const io = socket(node_server);
 // socket.IO server

@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -18,7 +18,8 @@
     "mongoose": "^6.4.0",
     "mongoose-int32": "^0.6.0",
     "mongoose-long": "^0.5.1",
-    "socket.io": "^4.5.1"
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1"
   },
   "description": "",
   "optionalDependencies": {
