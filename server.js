@@ -36,5 +36,5 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('client disconnected'));
 });
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
+console.log(process.env.PORT);
 node_server.listen(process.env.PORT);
