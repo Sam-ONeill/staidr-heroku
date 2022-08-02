@@ -18,25 +18,23 @@ mongoose
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
-const socket_test = require('./routes/socketTest');
-app.use('/test', socket_test);
+
+
 // Initialise node HTTPS server
-const node_server = https.createServer(app)
-    node_server.listen(port, function () {
-    console.log('Server is running on Port: ' + port);
-  });
+const node_server = https.createServer(app);
 
 //Begin SocketIO init
-const socket = require("socket.io");
-const {response} = require("express");
+const { Server } = require("socket.io");
 
-const io = socket(node_server);
+const io = new Server(node_server);
+
 // socket.IO server
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   console.log('Num Of Users online ' + io.engine.clientsCount);
   console.log(socket.id);
   socket.on('disconnect', () => console.log('client disconnected'));
 });
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 
+node_server.listen(5000);
