@@ -26,9 +26,9 @@ const node_server = https.createServer(app)
   });
 
 //Begin SocketIO init
-import {Server} from "socket.io";
+const socket = require("socket.io");
 
-const io = new Server(node_server);
+const io = socket(node_server);
 // socket.IO server
 
 io.on('connection', socket => {
