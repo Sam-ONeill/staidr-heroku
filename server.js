@@ -1,11 +1,16 @@
-const https = require('https');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const socket = require('socket.io');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
-const app = express().listen(port,()=>console.log("listening on port" + port));
+const INDEX = '/index.html';
+
+const app = express();
+const server = app
+    .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+    .listen(port, () => console.log(`Listening on ${port}`));
 
 // Connect to the MongoDb database
 app.use(cors({origin: true}));
@@ -20,9 +25,8 @@ const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
 
 //Begin SocketIO init
-const { Server } = require("socket.io");
 
-const io = new Server(app);
+const io = socket(server);
 
 // socket.IO server
 
@@ -30,6 +34,6 @@ io.on('connection', (socket) => {
   console.log('Client connected');
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-//setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 console.log("port " + port);
 //node_server.listen(process.env.PORT);
