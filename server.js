@@ -2,11 +2,12 @@ const https = require('https');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
 require('dotenv').config();
+
 const app = express();
 const port = process.env.PORT || 4000;
-// Connect to the database
+
+// Connect to the MongoDb database
 app.use(cors({origin: true}));
 app.use(express.json());
 mongoose
@@ -14,49 +15,26 @@ mongoose
   .then(() => console.log('Database connected successfully'))
   .catch(err => console.log(err));
 
+//Setup routes to groups
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
 
 
-  app.listen(port, function () {
-    console.log('Server is running on Port: ' + port);
-  });
-/*
-mongoose
-  .connect(process.env.DB, {useNewUrlParser: true})
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.log(err));
-// Since mongoose's Promise is deprecated, we override it with Node's Promise
-mongoose.Promise = global.Promise;
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept',
-  );
-  next();
-});
-app.use(bodyParser.json());
-app.use('/api', routes);
-app.use((err, req, res, next) => {
-  console.log(err);
-  next();
-});
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Initialise node HTTPS server
+const node_server = https.createServer(app);
 
-*/
-const {createServer} = require('http');
-const {Server} = require('socket.io');
+//Begin SocketIO init
+const { Server } = require("socket.io");
+
+const io = new Server(node_server);
+
 // socket.IO server
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  /* options */
-});
-io.on('connection', socket => {
+
+io.on('connection', (socket) => {
   console.log('Num Of Users online ' + io.engine.clientsCount);
   console.log(socket.id);
+  socket.on('disconnect', () => console.log('client disconnected'));
 });
-
-httpServer.listen(3000);
+//setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+console.log(process.env.PORT);
+node_server.listen(process.env.PORT);
