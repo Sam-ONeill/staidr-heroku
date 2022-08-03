@@ -41,5 +41,5 @@ io.on('connection', (socket) => {
 
 
 
-s//etInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+//setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
