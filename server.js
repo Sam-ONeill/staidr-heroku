@@ -31,8 +31,16 @@ const io = socket(server);
 
 io.on('connection', (socket) => {
   console.log('Client connected');
+
+  socket.on("joinRoom",({roomName,user }) => {
+    socket.join(13);
+    socket.emit("Room "+roomName+" was joined");
+  });
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
+
+
+
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 console.log("port " + port);
 //node_server.listen(process.env.PORT);
