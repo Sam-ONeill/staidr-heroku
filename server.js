@@ -4,8 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
+const app = express().listen(port,()=>console.log("listening on port" + port));
 
 // Connect to the MongoDb database
 app.use(cors({origin: true}));
@@ -19,27 +19,16 @@ mongoose
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
 
-
-// Initialise node HTTPS server
-const node_server = https.createServer(app);
-node_server.listen(port, function(err){
-  if (err){
-    console.log(err);
-  } else{
-    console.log("listening on port" + port)
-  }
-});
 //Begin SocketIO init
 const { Server } = require("socket.io");
 
-const io = new Server(node_server);
+const io = new Server(app);
 
 // socket.IO server
 
 io.on('connection', (socket) => {
-  console.log('Num Of Users online ' + io.engine.clientsCount);
-  console.log(socket.id);
- // socket.on('disconnect', () => console.log('client disconnected'));
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
 });
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 console.log("port " + port);
