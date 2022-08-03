@@ -9,7 +9,6 @@ const INDEX = '/index.html';
 
 const app = express();
 const server = app
-    .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
     .listen(port, () => console.log(`Listening on ${port}`));
 
 // Connect to the MongoDb database
