@@ -39,7 +39,7 @@ const io = new Server(node_server);
 io.on('connection', (socket) => {
   console.log('Num Of Users online ' + io.engine.clientsCount);
   console.log(socket.id);
-  socket.on('disconnect', () => console.log('client disconnected'));
+ // socket.on('disconnect', () => console.log('client disconnected'));
 });
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 console.log("port " + port);
