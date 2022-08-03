@@ -22,7 +22,13 @@ app.use('/groups', groupRouter);
 
 // Initialise node HTTPS server
 const node_server = https.createServer(app);
-
+node_server.listen(port, function(err){
+  if (err){
+    console.log(err);
+  } else{
+    console.log("listening on port" + port)
+  }
+});
 //Begin SocketIO init
 const { Server } = require("socket.io");
 
@@ -36,5 +42,5 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('client disconnected'));
 });
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-console.log(process.env.PORT);
-node_server.listen(process.env.PORT);
+console.log("port " + port);
+//node_server.listen(process.env.PORT);
