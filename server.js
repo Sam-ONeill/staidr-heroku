@@ -26,7 +26,7 @@ app.use('/groups', groupRouter);
 
 //Begin SocketIO init
 
-const io = SocketIO.listen(server);
+const io = SocketIO(server);
 
 // socket.IO server
 
