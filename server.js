@@ -31,17 +31,18 @@ const io = SocketIO(server);
 // socket.IO server
 
 io.on('connection', (socket) => {
-  console.log('Client connected');
   socket.emit("hello from server", 1, "2", { 3: Buffer.from([4]) });
   socket.on("hello from client", () => {
     // ...
     console.log("The client said hello");
-  })
+  });
+  socket.on("join-room",(socket,{roomName,user }) => {
+    socket.create(13);
+    socket.emit("Room "+roomName+" was joined");
+    console.log(`socket ${user} has joined room ${roomName}`);
+  });
 });
-io.on("joinRoom",(socket,{roomName,user }) => {
-  socket.create(13);
-  socket.emit("Room "+roomName+" was joined");
-});
+
 
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
