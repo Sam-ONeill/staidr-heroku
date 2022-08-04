@@ -37,7 +37,6 @@ io.on('connection', (socket) => {
     console.log("The client said hello");
   });
   socket.on("join-room",({room,id }) => {
-    socket.create(13);
     socket.emit("Room "+room+" was joined");
     console.log(`socket ${id} has joined room ${room}`);
   });
