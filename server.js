@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const socket = require('socket.io');
+const SocketIO = require('socket.io');
 require('dotenv').config();
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 const INDEX = '/index.html';
 
 const app = express();
@@ -21,19 +21,22 @@ mongoose
 
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
+const Console = require("console");
 app.use('/groups', groupRouter);
 
 //Begin SocketIO init
 
-const io = socket(server);
+const io = SocketIO.listen(server);
 
 // socket.IO server
 
 io.on('connection', (socket) => {
   console.log('Client connected');
-  socket.emit("you have connected");
-
-  socket.on('disconnect', () => console.log('Client disconnected'));
+  socket.emit("hello from server", 1, "2", { 3: Buffer.from([4]) });
+  socket.on("hello from client", () => {
+    // ...
+    console.log("The client said hello");
+  })
 });
 io.on("joinRoom",(socket,{roomName,user }) => {
   socket.create(13);
