@@ -31,14 +31,14 @@ const io = socket(server);
 
 io.on('connection', (socket) => {
   console.log('Client connected');
+  socket.emit("you have connected");
 
-  socket.on("joinRoom",({roomName,user }) => {
-    socket.join(13);
-    socket.emit("Room "+roomName+" was joined");
-  });
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-
+io.on("joinRoom",(socket,{roomName,user }) => {
+  socket.create(13);
+  socket.emit("Room "+roomName+" was joined");
+});
 
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
