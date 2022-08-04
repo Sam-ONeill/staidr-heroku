@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const SocketIO = require('socket.io');
 require('dotenv').config();
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
 const app = express();
