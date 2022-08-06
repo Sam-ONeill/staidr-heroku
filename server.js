@@ -52,9 +52,7 @@ return item+" + "+item.length;
 // socket.IO server
 
 //General functions on startup
-io.sockets.adapter.on("create-room", (room) => {
-  console.log(`room ${room} was created`);
-});
+
 
 //User based functions
 io.on('connection', (socket) => {
@@ -81,7 +79,7 @@ io.on('connection', (socket) => {
       //const rooms = io.sockets.adapter.rooms[room];
       //console.log(rooms.length);
 
-      socket.emit(`there are ${rooms.length} people in room ${room}`);
+      //socket.emit(`there are ${rooms.length} people in room ${room}`);
     }
   });
 
