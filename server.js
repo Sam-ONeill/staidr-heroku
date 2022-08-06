@@ -51,6 +51,12 @@ return item+" + "+item.length;
 
 // socket.IO server
 
+//General functions on startup
+io.sockets.adapter.on("create-room", (room) => {
+  console.log(`room ${room} was created`);
+});
+
+//User based functions
 io.on('connection', (socket) => {
   socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
   socket.on("hello from client", () => {
@@ -58,13 +64,13 @@ io.on('connection', (socket) => {
     console.log("The client said hello");
   });
   socket.on("join-room", ({room, id}) => {
-    socket.emit("Room " + room + " was joined");
+    socket.emit("room joined ", room," was joined");
     console.log(`socket ${id} has joined room ${room}`);
     console.log(io.sockets.adapter.rooms);
     if (io.sockets.adapter.rooms["apple"] !== undefined) {
 
-      console.log(getActiveRooms(socket));
-      console.log(getActiveRooms(socket).forEach(getLengthOfRooms));
+      console.log("rooms "+getActiveRooms(socket));
+      console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
       //const rooms = io.sockets.adapter.rooms[room];
       //console.log(rooms.length);
 
