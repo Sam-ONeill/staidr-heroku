@@ -27,7 +27,7 @@ app.use('/groups', groupRouter);
 //Begin SocketIO init
 
 const io = SocketIO(server);
-
+io.disconnectSockets();
 //socketIO functions
 function getActiveRooms(io) {
   // Convert map into 2D list:
@@ -58,19 +58,26 @@ io.sockets.adapter.on("create-room", (room) => {
 
 //User based functions
 io.on('connection', (socket) => {
-  socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
+  /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
   socket.on("hello from client", () => {
     // ...
     console.log("The client said hello");
-  });
+  });*/
+  socket.emit("ServerTest","This is a test message");
+
+  console.log(socket.rooms); // Set { <socket.id> }
+
+  socket.join("room1");
+
+  console.log(socket.rooms); // Set { <socket.id>, "room1" }
+
   socket.on("join-room", ({room, id}) => {
-    socket.emit("roomjoined ", room);
     console.log(`socket ${id} has joined room ${room}`);
     console.log(io.sockets.adapter.rooms);
     if (io.sockets.adapter.rooms["apple"] !== undefined) {
 
       console.log("rooms "+getActiveRooms(socket));
-      console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
+      //console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
       //const rooms = io.sockets.adapter.rooms[room];
       //console.log(rooms.length);
 
