@@ -60,7 +60,8 @@ io.on('connection', (socket) => {
   socket.on("join-room", ({room, id}) => {
     socket.emit("Room " + room + " was joined");
     console.log(`socket ${id} has joined room ${room}`);
-    if ((io.sockets.adapter.rooms["apple"] !== undefined)) {
+    console.log(io.sockets.adapter.rooms);
+    if (io.sockets.adapter.rooms["apple"] !== undefined) {
 
       console.log(getActiveRooms(socket));
       console.log(getActiveRooms(socket).forEach(getLengthOfRooms));
