@@ -71,10 +71,9 @@ io.on('connection', (socket) => {
 
   socket.on("join-room", ({room, id}) => {
     console.log(`socket ${id} has joined room ${room}`);
-    console.log(io.sockets.adapter.rooms);
     if (io.sockets.adapter.rooms["apple"] !== undefined) {
 
-      console.log("rooms "+getActiveRooms(socket));
+      //console.log("rooms "+getActiveRooms(socket));
       //console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
       //const rooms = io.sockets.adapter.rooms[room];
       //console.log(rooms.length);
@@ -85,7 +84,14 @@ io.on('connection', (socket) => {
 
 });
 
-
+const sockets = await io.in("room1").fetchSockets();
+console.log("fetch loop");
+for (const socket of sockets) {
+  console.log(socket.id);
+  console.log(socket.handshake);
+  console.log(socket.rooms);
+  console.log(socket.data);
+}
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
