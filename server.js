@@ -55,43 +55,48 @@ return item+" + "+item.length;
 
 
 //User based functions
-io.on('connection', (socket) => {
-  /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
-  socket.on("hello from client", () => {
-    // ...
-    console.log("The client said hello");
-  });*/
-  socket.emit("ServerTest","This is a test message");
+io.on('connection',
+    (socket) => {
+      /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
+      socket.on("hello from client", () => {
+        // ...
+        console.log("The client said hello");
+      });*/
+      socket.emit("ServerTest", "This is a test message");
 
-  console.log(socket.rooms); // Set { <socket.id> }
+      console.log(socket.rooms); // Set { <socket.id> }
 
-  socket.join("room1");
+      socket.join("room1");
 
-  console.log(socket.rooms); // Set { <socket.id>, "room1" }
+      console.log(socket.rooms); // Set { <socket.id>, "room1" }
 
-  socket.on("join-room", ({room, id}) => {
-    console.log(`socket ${id} has joined room ${room}`);
-    if (io.sockets.adapter.rooms["apple"] !== undefined) {
+      socket.on("join-room", ({room, id}) => {
+        console.log(`socket ${id} has joined room ${room}`);
+        if (io.sockets.adapter.rooms["apple"] !== undefined) {
 
-      //console.log("rooms "+getActiveRooms(socket));
-      //console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
-      //const rooms = io.sockets.adapter.rooms[room];
-      //console.log(rooms.length);
+          //console.log("rooms "+getActiveRooms(socket));
+          //console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
+          //const rooms = io.sockets.adapter.rooms[room];
+          //console.log(rooms.length);
 
-      //socket.emit(`there are ${rooms.length} people in room ${room}`);
-    }
-  });
+          //socket.emit(`there are ${rooms.length} people in room ${room}`);
+        }
+      });
+      socket.on("checkSockets",async () => {
+        const sockets = await io.in("room1").fetchSockets();
+        console.log("fetch loop");
+        for (const socket of sockets) {
+          console.log(socket.id);
+          console.log(socket.handshake);
+          console.log(socket.rooms);
+          console.log(socket.data);
+        }
+      });
 
-});
 
-const sockets = await io.in("room1").fetchSockets();
-console.log("fetch loop");
-for (const socket of sockets) {
-  console.log(socket.id);
-  console.log(socket.handshake);
-  console.log(socket.rooms);
-  console.log(socket.data);
-}
+    });
+
+
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
