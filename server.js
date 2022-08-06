@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     console.log("The client said hello");
   });
   socket.on("join-room", ({room, id}) => {
-    socket.emit("room joined ", room," was joined");
+    socket.emit("roomjoined ", room);
     console.log(`socket ${id} has joined room ${room}`);
     console.log(io.sockets.adapter.rooms);
     if (io.sockets.adapter.rooms["apple"] !== undefined) {
