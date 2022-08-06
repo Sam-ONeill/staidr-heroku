@@ -39,6 +39,9 @@ io.on('connection', (socket) => {
   socket.on("join-room",({room,id }) => {
     socket.emit("Room "+room+" was joined");
     console.log(`socket ${id} has joined room ${room}`);
+    const rooms = io.sockets.adapter.rooms[room];
+    console.log(rooms.length);
+    socket.emit(`there are ${rooms.length} people in room ${room}`);
   });
 });
 
