@@ -51,6 +51,7 @@ io.on('connection',
         console.log(`socket ${id} has joined room ${room}`);
       });
       socket.on("ping",()=>{
+          console.log("ping");
           socket.emit("pong");
         })
       socket.on("checkSockets",async () => {
