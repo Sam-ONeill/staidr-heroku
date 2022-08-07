@@ -29,23 +29,6 @@ app.use('/groups', groupRouter);
 const io = SocketIO(server);
 io.disconnectSockets();
 //socketIO functions
-function getActiveRooms(io) {
-  // Convert map into 2D list:
-  // ==> [['4ziBKG9XFS06NdtVAAAH', Set(1)], ['room1', Set(2)], ...]
-  const arr = Array.from(io.sockets.adapter.rooms);
-  // Filter rooms whose name exist in set:
-  // ==> [['room1', Set(2)], ['room2', Set(2)]]
-  const filtered = arr.filter(room => !room[1].has(room[0]))
-  // Return only the room name:
-  // ==> ['room1', 'room2']
-  const res = filtered.map(i => i[0]);
-  return res;
-}
-
-function getLengthOfRooms(item, index, arr){
-return item+" + "+item.length;
-
-}
 
 
 
@@ -62,26 +45,14 @@ io.on('connection',
         // ...
         console.log("The client said hello");
       });*/
-      socket.emit("ServerTest", "This is a test message");
-
-      console.log(socket.rooms); // Set { <socket.id> }
-
-      socket.join("room1");
-
-      console.log(socket.rooms); // Set { <socket.id>, "room1" }
+      //console.log(socket.rooms); // Set { <socket.id> }
 
       socket.on("join-room", ({room, id}) => {
         console.log(`socket ${id} has joined room ${room}`);
-        if (io.sockets.adapter.rooms["apple"] !== undefined) {
-
-          //console.log("rooms "+getActiveRooms(socket));
-          //console.log("rooms2 "+getActiveRooms(socket).forEach(getLengthOfRooms));
-          //const rooms = io.sockets.adapter.rooms[room];
-          //console.log(rooms.length);
-
-          //socket.emit(`there are ${rooms.length} people in room ${room}`);
-        }
       });
+      socket.on("ping",()=>{
+          socket.emit("pong");
+        })
       socket.on("checkSockets",async () => {
         const sockets = await io.in("room1").fetchSockets();
         console.log("fetch loop");
