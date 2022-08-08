@@ -56,7 +56,7 @@ io.on('connection',
       socket.on("join-room", (roomName) => {
         console.log(`socket ${socket.id} has joined room ${roomName}`);
         Group.find(
-            {"Name":"CS620C","Rooms.Room_name": roomName},
+            {"Name":"CS620C","Rooms.Room_name": "Apple"},
             function(err, result) {
                 if (err) {
                     res.send(err);
