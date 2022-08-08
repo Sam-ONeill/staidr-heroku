@@ -3,7 +3,8 @@ const router = require('express').Router();
 let Group = require('../models/groups_model');
 
 router.get('/', async (req, res) => {
-  const groups = await Group.find();
+  const groups = await Group.find(
+      {"Name":"CS620C","Rooms.Room_name": "Apple"});
   try {
     res.send(groups);
   } catch (err) {
