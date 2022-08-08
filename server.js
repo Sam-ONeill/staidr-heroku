@@ -22,7 +22,11 @@ mongoose
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
 const Console = require("console");
+const {disconnect} = require("mongoose");
 app.use('/groups', groupRouter);
+
+let Group = require('./models/groups_model');
+const res = require("express/lib/response");
 
 //Begin SocketIO init
 
@@ -47,13 +51,25 @@ io.on('connection',
       });*/
       //console.log(socket.rooms); // Set { <socket.id> }
 
-      socket.on("join-room", ({room, id}) => {
-        console.log(`socket ${id} has joined room ${room}`);
+        console.log("user Joined");
+
+      socket.on("join-room", (roomName) => {
+        console.log(`socket ${socket.id} has joined room ${roomName}`);
+        Group.find(
+            {"Name":"Cs620","Rooms.Room_name": roomName},
+            function(err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.json(result);
+                }
+            }
+        );
       });
       socket.on("ping",()=>{
           console.log("ping");
           socket.emit("pong");
-        })
+        });
       socket.on("checkSockets",async () => {
         const sockets = await io.in("room1").fetchSockets();
         console.log("fetch loop");
@@ -64,7 +80,9 @@ io.on('connection',
           console.log(socket.data);
         }
       });
+    socket.on("disconnect",() =>{
 
+    });
 
     });
 
