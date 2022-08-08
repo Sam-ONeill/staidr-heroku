@@ -55,9 +55,10 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/update', async (req, res) => {
   try {
-    await Group.findByIdAndUpdate(req.params.id, req.body);
+    await Group.find(
+        {"Name":"CS620C","Rooms.Room_name": "Apple"});
     await Group.save();
     res.send(group);
   } catch (err) {
