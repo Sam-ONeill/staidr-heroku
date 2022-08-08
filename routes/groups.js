@@ -56,10 +56,17 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.patch('/update', async (req, res) => {
+router.patch('/update/:id', async (req, res) => {
+  console.log(req.body);
+  const Name = req.body.Name;
+  const Rooms = req.body.Rooms;
+  const TotalMessagesSent = req.body.TotalMessagesSent;
+  const Users = req.body.Users;
+
   try {
-    await Group.find(
-        {"Name":"CS620C","Rooms.Room_name": "Apple"});
+    const update = await Group.findOne(
+        {"Name":"CS620C"});
+
     await Group.save();
     res.send(group);
   } catch (err) {

@@ -24,7 +24,9 @@ const groupRouter = require('./routes/groups');
 const Console = require("console");
 const {disconnect} = require("mongoose");
 app.use('/groups', groupRouter);
-
+groupRouter.get("/groups",(req,res)=>{
+    console.log("my response " +res);
+});
 let Group = require('./models/groups_model');
 const res = require("express/lib/response");
 
@@ -55,16 +57,7 @@ io.on('connection',
 
       socket.on("join-room", (roomName) => {
         console.log(`socket ${socket.id} has joined room ${roomName}`);
-        Group.find(
-            {"Name":"CS620C","Rooms.Room_name": "Apple"},
-            function(err, result) {
-                if (err) {
-                    res.send(err);
-                } else {
-                    res.json(result);
-                }
-            }
-        );
+
       });
       socket.on("ping",()=>{
           console.log("ping");
