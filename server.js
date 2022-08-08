@@ -24,7 +24,7 @@ const groupRouter = require('./routes/groups');
 const Console = require("console");
 const {disconnect} = require("mongoose");
 app.use('/groups', groupRouter);
-groupRouter.get("/groups",(req,res)=>{
+groupRouter.get("/",(req,res)=>{
     console.log("my response " +res);
 });
 let Group = require('./models/groups_model');
