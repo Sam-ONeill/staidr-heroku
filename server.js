@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const SocketIO = require('socket.io');
 require('dotenv').config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const INDEX = '/index.html';
 
 const app = express();
@@ -21,15 +21,13 @@ mongoose
 
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
-const Console = require("console");
-const {disconnect} = require("mongoose");
 app.use('/groups', groupRouter);
-groupRouter.get("/",(req,res)=>{
-    console.log("my response " +res);
-});
-let Group = require('./models/groups_model');
-const res = require("express/lib/response");
 
+const Group = require('./models/groups_model');
+let socketGroupName = "CS620C"
+let socketRoomName = ""
+
+//console.log(query);
 //Begin SocketIO init
 
 const io = SocketIO(server);
@@ -56,7 +54,14 @@ io.on('connection',
         console.log("user Joined");
 
       socket.on("join-room", (roomName) => {
+          let socketRoomName = roomName
         console.log(`socket ${socket.id} has joined room ${roomName}`);
+        //increase active users in room by 1
+        Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':1}},{
+            rawResult: true // Return the raw result from the MongoDB driver
+          }).then(()=>{
+              console.log(`Ran i guess ${socketGroupName} ${socketRoomName}`);
+        });
 
       });
       socket.on("ping",()=>{
@@ -74,7 +79,11 @@ io.on('connection',
         }
       });
     socket.on("disconnect",() =>{
-
+        Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':-1}},{
+            rawResult: true // Return the raw result from the MongoDB driver
+        }).then(()=> {
+            console.log(`Ran i guess ${socketGroupName} ${socketRoomName}`);
+        });
     });
 
     });
