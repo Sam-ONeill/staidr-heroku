@@ -25,8 +25,8 @@ app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
 // IMPORTS REQUIRED TO CREATE A SESSION ON THE SERVER INCLUDING RANDOM SESSION IDS
-const {inMemorySessionStore} = require('./sessionStore');
-const sessionStore = new inMemorySessionStore();
+const { Storage } = require('./sessionStore');
+const sessionStore = new Storage();
 const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
