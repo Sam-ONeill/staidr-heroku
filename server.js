@@ -26,8 +26,7 @@ app.use('/groups', groupRouter);
 const Group = require('./models/groups_model');
 let socketGroupName = "CS620C"
 let socketRoomName = ""
-let socektUserName = ""
-
+let socketUserName = ""
 //console.log(query);
 //Begin SocketIO init
 
@@ -56,8 +55,22 @@ io.on('connection',
 
       socket.on("join-room", (roomName,userName) => {
           let socketRoomName = roomName
-          let socketUserName = userName
-        console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socketUserName}`);
+          socket.username = userName;
+
+          socket.broadcast.emit("user connected", {
+              userID: socket.id,
+              username: socket.username,
+          });
+
+          const users = [];
+          for (let [id, socket] of io.of("/").sockets) {
+              users.push({
+                  userID: id,
+                  username: socket.username,
+              });
+          }
+          socket.emit("users", users);
+        console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
         //increase active users in room by 1
         Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':1}},{
             rawResult: true // Return the raw result from the MongoDB driver
@@ -80,7 +93,7 @@ io.on('connection',
           console.log(socket.data);
         }
       });
-    socket.on("disconnect",() =>{
+    socket.on("user-left",() =>{
         Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':-1}},{
             rawResult: true // Return the raw result from the MongoDB driver
         }).then(()=> {
