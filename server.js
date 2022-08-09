@@ -15,15 +15,21 @@ const server = app
 app.use(cors({origin: true}));
 app.use(express.json());
 mongoose
-  .connect(process.env.DB, {useNewUrlParser: true})
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.log(err));
+    .connect(process.env.DB, {useNewUrlParser: true})
+    .then(() => console.log('Database connected successfully'))
+    .catch(err => console.log(err));
 
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
 app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
+// IMPORTS REQUIRED TO CREATE A SESSION ON THE SERVER INCLUDING RANDOM SESSION IDS
+const {inMemorySessionStore} = require('./sessionStore');
+const sessionStore = new inMemorySessionStore();
+const crypto = require("crypto");
+const randomId = () => crypto.randomBytes(8).toString("hex");
+
 let socketGroupName = "CS620C"
 let socketRoomName = ""
 let socketUserName = ""
@@ -35,76 +41,126 @@ io.disconnectSockets();
 //socketIO functions
 
 
-
 // socket.IO server
 
 //General functions on startup
 
-
+io.use((socket, next) => {
+    const sessionID = socket.handshake.auth.sessionID;
+    if (sessionID) {
+        // find existing session
+        const session = sessionStore.findSession(sessionID);
+        if (session) {
+            socket.sessionID = sessionID;
+            socket.userID = session.userID;
+            socket.username = session.username;
+            return next();
+        }
+    }
+    const username = socket.handshake.auth.username;
+    if (!username) {
+        return next(new Error("invalid username"));
+    }
+    // create new session
+    socket.sessionID = randomId();
+    socket.userID = randomId();
+    socket.username = username;
+    next();
+});
 //User based functions
 io.on('connection',
     (socket) => {
-      /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
-      socket.on("hello from client", () => {
-        // ...
-        console.log("The client said hello");
-      });*/
-      //console.log(socket.rooms); // Set { <socket.id> }
+        /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
+        socket.on("hello from client", () => {
+          // ...
+          console.log("The client said hello");
+        });*/
+        //console.log(socket.rooms); // Set { <socket.id> }
 
         console.log("user Joined");
-
-      socket.on("join-room", (roomName,userName) => {
-          let socketRoomName = roomName
-          socket.username = userName;
-
-          socket.broadcast.emit("user connected", {
-              userID: socket.id,
-              username: socket.username,
-          });
-
-          const users = [];
-          for (let [id, socket] of io.of("/").sockets) {
-              if(socket.username != null) {
-                  users.push({
-                      userID: id,
-                      username: socket.username,
-                  });
-              }
-          }
-          socket.emit("users", users);
-        console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
-        //increase active users in room by 1
-        Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':1}},{
-            rawResult: true // Return the raw result from the MongoDB driver
-          }).then(()=>{
-              console.log(`Ran i guess ${socketGroupName} ${socketRoomName}`);
+        sessionStore.saveSession(socket.sessionID, {
+            userID: socket.userID,
+            username: socket.username,
+            connected: true,
         });
 
-      });
-      socket.on("ping",()=>{
-          console.log("ping");
-          socket.emit("pong");
+        // emit session details
+        socket.emit("session", {
+            sessionID: socket.sessionID,
+            userID: socket.userID,
         });
-      socket.on("checkSockets",async () => {
-        const sockets = await io.in("room1").fetchSockets();
-        console.log("fetch loop");
-        for (const socket of sockets) {
-          console.log(socket.id);
-          console.log(socket.handshake);
-          console.log(socket.rooms);
-          console.log(socket.data);
-        }
-      });
-    socket.on("user-left",() =>{
-        Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':-1}},{
-            rawResult: true // Return the raw result from the MongoDB driver
-        }).then(()=> {
-            console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
+
+        socket.on("join-room", (roomName, userName) => {
+            socket.join(roomName);
+            let socketRoomName = roomName
+            socket.username = userName;
+
+            const users = [];
+            sessionStore.findAllSessions().forEach((session) =>{
+                if (socket.username != null) {
+                    users.push({
+                        userID: session.userID,
+                        username: session.username,
+                        connected: session.connected,
+                    });
+                }
+            });
+
+            socket.emit("users", users);
+
+            socket.broadcast.emit("user connected", {
+                userID: socket.userID,
+                username: socket.username,
+                connected: true,
+            });
+
+            console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
+            //increase active users in room by 1
+            Group.findOneAndUpdate({
+                "Name": socketGroupName,
+                "Rooms.Room_name": socketRoomName
+            }, {$inc: {'Rooms.$.Active_users': 1}}, {
+                rawResult: true // Return the raw result from the MongoDB driver
+            })
+
+            socket.on("Room message", ({ content}) => {
+                socket.to(socketRoomName).emit("message", {
+                    content,
+                    from: socket.userID,
+                });
+            });
+
         });
+        socket.on("ping", () => {
+            console.log("ping");
+            socket.emit("pong");
+        });
+
+        socket.on("disconnect", async() => {
+
+            Group.findOneAndUpdate({
+                "Name": socketGroupName,
+                "Rooms.Room_name": socketRoomName
+            }, {$inc: {'Rooms.$.Active_users': -1}}, {
+                rawResult: true // Return the raw result from the MongoDB driver
+            }).then(() => {
+                console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
+            });
+            const matchingSockets = await io.in(socket.userID).allSockets();
+            const isDisconnected = matchingSockets.size === 0;
+            if (isDisconnected) {
+                // notify other users
+                socket.broadcast.emit("user disconnected", socket.userID);
+                // update the connection status of the session
+                sessionStore.saveSession(socket.sessionID, {
+                    userID: socket.userID,
+                    username: socket.username,
+                    connected: false,
+                });
+            }
+        });
+
     });
-
-    });
-
 
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
