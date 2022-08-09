@@ -82,7 +82,7 @@ io.on('connection',
         Group.findOneAndUpdate({"Name":socketGroupName,"Rooms.Room_name":socketRoomName}, {$inc:{'Rooms.$.Active_users':-1}},{
             rawResult: true // Return the raw result from the MongoDB driver
         }).then(()=> {
-            console.log(`Ran i guess ${socketGroupName} ${socketRoomName}`);
+            console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
         });
     });
 
