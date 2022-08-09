@@ -64,10 +64,12 @@ io.on('connection',
 
           const users = [];
           for (let [id, socket] of io.of("/").sockets) {
-              users.push({
-                  userID: id,
-                  username: socket.username,
-              });
+              if(socket.username != null) {
+                  users.push({
+                      userID: id,
+                      username: socket.username,
+                  });
+              }
           }
           socket.emit("users", users);
         console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
