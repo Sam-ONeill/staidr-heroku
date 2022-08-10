@@ -84,7 +84,7 @@ io.on('connection',
                 });
                 const session = sessionStore.findSession(socket.sessionID);
 
-                console.log("Session created"+session.username+" "+ session.sessionID);
+                console.log("Session created"+session.username+" "+ session.userID);
             }
             socket.emit("session", {
                 sessionID: socket.sessionID,
