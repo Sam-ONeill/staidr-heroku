@@ -59,46 +59,51 @@ io.on('connection',
          */
 
         socket.on("Joined-group", (userName) => {
-            const sessionID = socket.sessionID;
-            console.log("is there a socket? " + sessionID);
-            if (sessionID) {
-                // find existing session
-                const session = sessionStore.findSession(sessionID);
-                if (session) {
-                    socket.sessionID = sessionID;
-                    socket.userID = session.userID;
-                    socket.username = session.username;
+            if(!userName){
+                console.log("no username found");
+            }else {
+                const sessionID = socket.sessionID;
+                console.log("is there a socket? " + sessionID);
+                if (sessionID) {
+                    // find existing session
+                    const session = sessionStore.findSession(sessionID);
+                    if (session) {
+                        socket.sessionID = sessionID;
+                        socket.userID = session.userID;
+                        socket.username = session.username;
+                    }
+                } else {
+
+                    // if there isn't an existing session
+                    // create new session
+                    socket.sessionID = randomId();
+                    socket.userID = randomId();
+                    socket.username = userName
+                    console.log("userid " + socket.userID);
+                    console.log("created new session");
+                    sessionStore.saveSession(socket.sessionID, {
+                        userID: socket.userID,
+                        username: socket.username,
+                        connected: true,
+                    });
+                    const session = sessionStore.findSession(socket.sessionID);
+
+                    console.log("Session created" + session.username + " " + session.userID);
                 }
-            } else {
-
-                // if there isn't an existing session
-                // create new session
-                socket.sessionID = randomId();
-                socket.userID = randomId();
-                socket.username = userName
-                console.log("userid " + socket.userID);
-                console.log("created new session");
-                sessionStore.saveSession(socket.sessionID, {
+                socket.emit("session", {
+                    sessionID: socket.sessionID,
                     userID: socket.userID,
-                    username: socket.username,
-                    connected: true,
                 });
-                const session = sessionStore.findSession(socket.sessionID);
-
-                console.log("Session created" + session.username + " " + session.userID);
             }
-            socket.emit("session", {
-                sessionID: socket.sessionID,
-                userID: socket.userID,
-            });
+
         });
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
+            const session = sessionStore.findSession(sessionID);
+            socket.username = session.username;
             socket.join(roomName);
             let socketRoomName = roomName
-            const session = sessionStore.findSession(sessionID);
 
-            socket.username = session.username;
 
             const users = [];
             sessionStore.findAllSessions().forEach((session) => {
