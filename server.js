@@ -44,60 +44,61 @@ const io = SocketIO(server);
 
 //General functions on startup
 
-io.use((socket, next) => {
-    if(socket) {
-        const sessionID = socket.sessionID;
-        console.log("is tehre a socekt? " + JSON.parse(socket) + " " + sessionID);
-        if (sessionID) {
-            // find existing session
-            const session = sessionStore.findSession(sessionID);
-            if (session) {
-                socket.sessionID = sessionID;
-                socket.userID = session.userID;
-                return next();
-            }
-        }
-
-
-        // create new session
-        socket.sessionID = randomId();
-        socket.userID = randomId();
-        console.log("userid " + socekt.userID);
-        console.log("created new session");
-        next();
-    }
-    next();
-
-});
 //User based functions
 io.on('connection',
     (socket) => {
-
-        /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
-        socket.on("hello from client", () => {
-          // ...
-          console.log("The client said hello");
-        });*/
-        //console.log(socket.rooms); // Set { <socket.id> }
         //print all events to console
         socket.onAny((event, ...args) => {
             console.log(event, args);
         });
 
-        console.log("user Joined");
-        sessionStore.saveSession(socket.sessionID, {
-            userID: socket.userID,
-            username: socket.username,
-            connected: true,
+        /*
+        If i set the session on the group screen
+         the client should be able to access that from any group
+         */
+
+        socket.on("Joined-group",(userName) =>{
+            const sessionID = socket.sessionID;
+            console.log("is there a socket? " + sessionID);
+            if (sessionID) {
+                // find existing session
+                const session = sessionStore.findSession(sessionID);
+                if (session) {
+                    socket.sessionID = sessionID;
+                    socket.userID = session.userID;
+                    socket.username = session.username;
+                }
+            }else {
+
+                // if there isn't an existing session
+                // create new session
+                socket.sessionID = randomId();
+                socket.userID = randomId();
+                socket.username = userName
+                console.log("userid " + socket.userID);
+                console.log("created new session");
+                sessionStore.saveSession(socket.sessionID, {
+                    userID: socket.userID,
+                    username: socket.username,
+                    connected: true,
+                });
+                console.log("Session created"+sessionStore.findSession(socket.sessionID));
+            }
+            socket.emit("session", {
+                sessionID: socket.sessionID,
+                userID: socket.userID,
+            });
         });
+
+
+
+        console.log("user Joined");
+
 
         // emit session details
         console.log(`tHIS IS THE SESSION ID${socket.sessionID}`);
 
-        socket.emit("session", {
-            sessionID: socket.sessionID,
-            userID: socket.userID,
-        });
+
 
         socket.on("join-room", (roomName, userName) => {
             socket.join(roomName);
