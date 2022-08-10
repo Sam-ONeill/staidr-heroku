@@ -47,6 +47,7 @@ io.disconnectSockets();
 
 io.use((socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
+    console.log("Made it here 1");
     if (sessionID) {
         // find existing session
         const session = sessionStore.findSession(sessionID);
@@ -66,10 +67,14 @@ io.use((socket, next) => {
     socket.userID = randomId();
     socket.username = username;
     next();
+    console.log("Made it here 2");
+
 });
 //User based functions
 io.on('connection',
     (socket) => {
+        console.log("Made it here 3");
+
         /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
         socket.on("hello from client", () => {
           // ...
