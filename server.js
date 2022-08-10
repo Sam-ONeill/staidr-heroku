@@ -45,7 +45,7 @@ io.disconnectSockets();
 
 //General functions on startup
 
-io.use((socket, next) => {
+/*io.use((socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
     console.log("Made it here 1");
     if (sessionID) {
@@ -69,7 +69,7 @@ io.use((socket, next) => {
     next();
     console.log("Made it here 2");
 
-});
+});*/
 //User based functions
 io.on('connection',
     (socket) => {
