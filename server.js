@@ -99,6 +99,9 @@ io.on('connection',
         });
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
+            if (!sessionID) {
+                alert("no sesion id");
+            }else{
             const session = sessionStore.findSession(sessionID);
             socket.username = session.username;
             socket.join(roomName);
@@ -143,7 +146,7 @@ io.on('connection',
                     from: socket.userID,
                 });
             });
-
+        }
         });
         socket.on("ping", () => {
             console.log("ping");
