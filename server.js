@@ -151,7 +151,7 @@ io.on('connection',
         });
 
 
-        socket.on("leaveRoom", ({socketRoomName, socketGroupName}) => {
+        socket.on("leaveRoom", ({socketRoomName}) => {
             Group.findOneAndUpdate({
                 "Name": socketGroupName,
                 "Rooms.Room_name": socketRoomName
