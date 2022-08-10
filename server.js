@@ -47,6 +47,9 @@ const io = SocketIO(server);
 io.use((socket, next) => {
     const sessionID = socket.sessionID;
     console.log("is tehre a socekt? " + socket+" "+ sessionID);
+    socket.onAny((event, ...args) => {
+        console.log(event, args);
+    });
     if (sessionID) {
         // find existing session
         const session = sessionStore.findSession(sessionID);
