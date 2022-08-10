@@ -76,6 +76,10 @@ io.on('connection',
           console.log("The client said hello");
         });*/
         //console.log(socket.rooms); // Set { <socket.id> }
+        //print all events to console
+        socket.onAny((event, ...args) => {
+            console.log(event, args);
+        });
 
         console.log("user Joined");
         sessionStore.saveSession(socket.sessionID, {
