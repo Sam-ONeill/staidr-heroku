@@ -82,7 +82,9 @@ io.on('connection',
                     username: socket.username,
                     connected: true,
                 });
-                console.log("Session created"+sessionStore.findSession(socket.sessionID));
+                const session = sessionStore.findSession(sessionID);
+
+                console.log("Session created"+session.username+" "+ session.sessionID);
             }
             socket.emit("session", {
                 sessionID: socket.sessionID,
