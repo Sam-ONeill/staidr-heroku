@@ -100,7 +100,7 @@ io.on('connection',
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
             if (!sessionID) {
-                alert("no sesion id");
+                alert("no session id");
             }else{
             const session = sessionStore.findSession(sessionID);
             socket.username = session.username;
