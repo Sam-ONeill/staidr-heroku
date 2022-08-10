@@ -82,7 +82,7 @@ io.on('connection',
                     username: socket.username,
                     connected: true,
                 });
-                const session = sessionStore.findSession(sessionID);
+                const session = sessionStore.findSession(socket.sessionID);
 
                 console.log("Session created"+session.username+" "+ session.sessionID);
             }
