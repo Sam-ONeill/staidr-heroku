@@ -47,7 +47,7 @@ io.disconnectSockets();
 
 io.use((socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
-    console.log("Made it here 1");
+    console.log("is tehre a socekt? " + socket);
     if (sessionID) {
         // find existing session
         const session = sessionStore.findSession(sessionID);
