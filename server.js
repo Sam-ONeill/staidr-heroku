@@ -25,8 +25,8 @@ app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
 // IMPORTS REQUIRED TO CREATE A SESSION ON THE SERVER INCLUDING RANDOM SESSION IDS
-const { Storage } = require('./sessionStore');
-const sessionStore = new Storage();
+const { InMemorySessionStore } = require('./sessionStore');
+const sessionStore = new InMemorySessionStore();
 const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
@@ -45,7 +45,7 @@ io.disconnectSockets();
 
 //General functions on startup
 
-/*io.use((socket, next) => {
+io.use((socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
     console.log("Made it here 1");
     if (sessionID) {
@@ -59,21 +59,22 @@ io.disconnectSockets();
         }
     }
     const username = socket.handshake.auth.username;
+    console.log("username " + username);
     if (!username) {
         return next(new Error("invalid username"));
     }
+    console.log("created new session");
+
     // create new session
     socket.sessionID = randomId();
     socket.userID = randomId();
     socket.username = username;
     next();
-    console.log("Made it here 2");
 
-});*/
+});
 //User based functions
 io.on('connection',
     (socket) => {
-        console.log("Made it here 3");
 
         /*socket.emit("hello from server", 1, "2", {3: Buffer.from([4])});
         socket.on("hello from client", () => {
@@ -94,6 +95,8 @@ io.on('connection',
         });
 
         // emit session details
+        console.log(`tHIS IS THE SESSION ID${socket.sessionID}`);
+
         socket.emit("session", {
             sessionID: socket.sessionID,
             userID: socket.userID,

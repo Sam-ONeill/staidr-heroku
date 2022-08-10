@@ -1,33 +1,32 @@
-class Storage {
-    constructor() {
-        this.data = new Map();
-    }
-
-    key(n) {
-        return [...this.data.keys()][n];
-    }
-    findSession(key) {
-        return this.data.get(key);
-    }
-    get length() {
-        return this.data.size;
-    }
-
-    saveSession(key, value) {
-        this.data.set(key, value);
-    }
-    deleteSession(key) {
-        this.data.delete(key);
-    }
-    clear() {
-        this.data = new Map();
-    }
-    findAllSessions(){
-        return [...this.data.values()];
-    }
-
+/* abstract */ class SessionStore {
+    findSession(id) {}
+    saveSession(id, session) {}
+    findAllSessions() {}
 }
 
-let sessionStorage = globalThis.sessionStorage = globalThis.sessionStorage ?? new Storage();
+class InMemorySessionStore extends SessionStore {
+    constructor() {
+        super();
+        this.sessions = new Map();
+    }
 
-module.exports = { Storage, sessionStorage };
+    findSession(id) {
+        return this.sessions.get(id);
+    }
+
+    saveSession(id, session) {
+        this.sessions.set(id, session);
+    }
+
+    findAllSessions() {
+        return [...this.sessions.values()];
+    }
+}
+
+const SESSION_TTL = 24 * 60 * 60;
+const mapSession = ([userID, username, connected]) =>
+    userID ? { userID, username, connected: connected === "true" } : undefined;
+
+module.exports = {
+    InMemorySessionStore,
+};
