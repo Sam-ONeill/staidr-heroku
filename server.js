@@ -45,27 +45,27 @@ const io = SocketIO(server);
 //General functions on startup
 
 io.use((socket, next) => {
-    const sessionID = socket.sessionID;
-    console.log("is tehre a socekt? " + socket+" "+ sessionID);
-    socket.onAny((event, ...args) => {
-        console.log(event, args);
-    });
-    if (sessionID) {
-        // find existing session
-        const session = sessionStore.findSession(sessionID);
-        if (session) {
-            socket.sessionID = sessionID;
-            socket.userID = session.userID;
-            return next();
+    if(socket) {
+        const sessionID = socket.sessionID;
+        console.log("is tehre a socekt? " + socket + " " + sessionID);
+        if (sessionID) {
+            // find existing session
+            const session = sessionStore.findSession(sessionID);
+            if (session) {
+                socket.sessionID = sessionID;
+                socket.userID = session.userID;
+                return next();
+            }
         }
+
+
+        // create new session
+        socket.sessionID = randomId();
+        socket.userID = randomId();
+        console.log("userid " + socekt.userID);
+        console.log("created new session");
+        next();
     }
-
-
-    // create new session
-    socket.sessionID = randomId();
-    socket.userID = randomId();
-    console.log("userid " + socekt.userID);
-    console.log("created new session");
     next();
 
 });
