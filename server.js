@@ -25,9 +25,10 @@ app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
 // IMPORTS REQUIRED TO CREATE A SESSION ON THE SERVER INCLUDING RANDOM SESSION IDS
-const { InMemorySessionStore } = require('./sessionStore');
+const {InMemorySessionStore} = require('./sessionStore');
 const sessionStore = new InMemorySessionStore();
 const crypto = require("crypto");
+const {disconnect} = require("mongoose");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
 let socketGroupName = "CS620C"
@@ -57,7 +58,7 @@ io.on('connection',
          the client should be able to access that from any group
          */
 
-        socket.on("Joined-group",(userName) =>{
+        socket.on("Joined-group", (userName) => {
             const sessionID = socket.sessionID;
             console.log("is there a socket? " + sessionID);
             if (sessionID) {
@@ -68,7 +69,7 @@ io.on('connection',
                     socket.userID = session.userID;
                     socket.username = session.username;
                 }
-            }else {
+            } else {
 
                 // if there isn't an existing session
                 // create new session
@@ -84,7 +85,7 @@ io.on('connection',
                 });
                 const session = sessionStore.findSession(socket.sessionID);
 
-                console.log("Session created"+session.username+" "+ session.userID);
+                console.log("Session created" + session.username + " " + session.userID);
             }
             socket.emit("session", {
                 sessionID: socket.sessionID,
@@ -92,23 +93,15 @@ io.on('connection',
             });
         });
 
-
-
-        console.log("user Joined");
-
-
-        // emit session details
-        console.log(`tHIS IS THE SESSION ID${socket.sessionID}`);
-
-
-
-        socket.on("join-room", (roomName, userName) => {
+        socket.on("join-room", (roomName, userName, sessionID, userID) => {
             socket.join(roomName);
             let socketRoomName = roomName
-            socket.username = userName;
+            const session = sessionStore.findSession(sessionID);
+
+            socket.username = session.username;
 
             const users = [];
-            sessionStore.findAllSessions().forEach((session) =>{
+            sessionStore.findAllSessions().forEach((session) => {
                 if (socket.username != null) {
                     users.push({
                         userID: session.userID,
@@ -116,6 +109,10 @@ io.on('connection',
                         connected: session.connected,
                     });
                 }
+            });
+            socket.emit("session", {
+                sessionID: socket.sessionID,
+                userID: socket.userID,
             });
 
             socket.emit("users", users);
@@ -135,7 +132,7 @@ io.on('connection',
                 rawResult: true // Return the raw result from the MongoDB driver
             })
 
-            socket.on("Room message", ({ content}) => {
+            socket.on("Room message", ({content}) => {
                 socket.to(socketRoomName).emit("message", {
                     content,
                     from: socket.userID,
@@ -148,8 +145,8 @@ io.on('connection',
             socket.emit("pong");
         });
 
-        socket.on("disconnect", async() => {
 
+        socket.on("leaveRoom", ({socketRoomName, socketGroupName}) => {
             Group.findOneAndUpdate({
                 "Name": socketGroupName,
                 "Rooms.Room_name": socketRoomName
@@ -158,6 +155,9 @@ io.on('connection',
             }).then(() => {
                 console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
             });
+        });
+
+        socket.on("disconnect", async () => {
             const matchingSockets = await io.in(socket.userID).allSockets();
             const isDisconnected = matchingSockets.size === 0;
             if (isDisconnected) {
