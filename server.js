@@ -42,13 +42,65 @@ const io = SocketIO(server);
 //socketIO functions
 
 
+
 // socket.IO server
 
 //General functions on startup
 
+
+// I want to test how session store saves sessions
+
+const users = [];
+
+sessionStore.saveSession("12345", {
+    userID: "ABCDEF",
+    username: "tesT",
+    connected: true,
+});
+
+sessionStore.saveSession("123454", {
+    userID: "ABCDEF2",
+    username: "tesT2",
+    connected: true,
+});
+
+
+
+function saveOneSession(sessionID,userID,username,connected){
+    sessionStore.saveSession(sessionID, {
+        userID: userID,
+        username: username,
+        connected: connected,
+    });
+}
+
+function getAllSessions(){
+    sessionStore.findAllSessions().forEach((session) => {
+        if (session.username != null) {
+            console.log("pushing users to user")
+            users.push({
+                userID: session.userID,
+                username: session.username,
+                connected: session.connected,
+            });
+        }
+    });
+}
+
+saveOneSession("77","ABCDEF3","test3",true );
+
+getAllSessions();
+
+console.log("all my users" +JSON.stringify(users));
+
 //User based functions
 io.on('connection',
     (socket) => {
+        saveOneSession("77","ABCDEF3","test4",true );
+
+        getAllSessions();
+        console.log("all my users in connection" +JSON.stringify(users));
+
         //print all events to console
         socket.onAny((event, ...args) => {
             console.log(event, args);
@@ -60,6 +112,11 @@ io.on('connection',
          */
 
         socket.on("Joined-group", (userName) => {
+            saveOneSession("77","ABCDEF3","test5",true );
+
+            getAllSessions();
+            console.log("all my users in joined group" +JSON.stringify(users));
+
             if(!userName){
                 console.log("no username found");
             }else {
@@ -100,6 +157,11 @@ io.on('connection',
         });
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
+            saveOneSession("77","ABCDEF3","test6",true );
+
+            getAllSessions();
+            console.log("all my users in join room" +JSON.stringify(users));
+
             if (!sessionID) {
                 alert("no session id");
             } else {
@@ -185,6 +247,13 @@ io.on('connection',
         });
 
     });
+
+
+
+
+
+
+
 
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
