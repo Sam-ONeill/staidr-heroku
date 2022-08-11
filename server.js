@@ -110,7 +110,7 @@ io.on('connection',
 
             if(socketUserName != null) {
                 console.log("test 1" +users.find(user => user.username === socketUserName));
-                if (users.find(user => user.username === socketUserName) === null) { // User has not logged in before
+                if (users.find(user => user.username === socketUserName) === undefined) { // User has not logged in before
                     socket.sessionID = randomId();
                     socket.userID = randomId();
                     saveOneSession(socket.sessionID, socket.userID, socketUserName, true);
