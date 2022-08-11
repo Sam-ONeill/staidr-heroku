@@ -77,7 +77,6 @@ function getOneSession(sessionID){
 function getAllSessions(){
     sessionStore.findAllSessions().forEach((session) => {
         if (session.username != null ) {
-            console.log("pushing users to user")
             users.push({
                 userID: session.userID,
                 username: session.username,
@@ -90,7 +89,7 @@ function getAllSessions(){
 
 saveOneSession("1","2","a",true);
 getAllSessions();
-console.log("at begining"+users);
+console.log("at begining"+JSON.stringify(users));
 console.log("amount"+users.length);
 
 
@@ -108,12 +107,12 @@ io.on('connection',
         socket.on('username', (username) =>{
 
             getAllSessions();
-            console.log("aboev if statement "+users)
+            console.log("aboev if statement "+JSON.stringify(users));
             console.log("amount" + users.length);
 
             socketUserName = username;
             const find = users.find(user => user.username === socketUserName);
-            console.log("find"+find);
+            console.log("find"+JSON.stringify(find));
             if(find != null){ // User has logged in before
                 const index = users.findIndex((item) => item.username === socketUserName);
                 console.log("the session id"+ users[index].sessionID);
@@ -138,7 +137,7 @@ io.on('connection',
         });
 
         getAllSessions();
-        console.log("below if statement "+users)
+        console.log("below if statement "+JSON.stringify(users));
         console.log("amount"+users.length);
 
        if(socketUserName != null) {
