@@ -30,6 +30,7 @@ const sessionStore = new InMemorySessionStore();
 const crypto = require("crypto");
 const {disconnect} = require("mongoose");
 const randomId = () => crypto.randomBytes(8).toString("hex");
+let session;
 
 let socketGroupName = "CS620C"
 let socketRoomName = ""
@@ -66,7 +67,7 @@ io.on('connection',
                 console.log("is there a socket? " + sessionID);
                 if (sessionID) {
                     // find existing session
-                    const session = sessionStore.findSession(sessionID);
+                    session = sessionStore.findSession(sessionID);
                     if (session) {
                         socket.sessionID = sessionID;
                         socket.userID = session.userID;
@@ -102,7 +103,7 @@ io.on('connection',
             if (!sessionID) {
                 alert("no session id");
             } else {
-                const session = sessionStore.findSession(socket.sessionID);
+                session = sessionStore.findSession(socket.sessionID);
                 console.log("session data below");
                 console.dir(session);
                 console.log("session data above");
