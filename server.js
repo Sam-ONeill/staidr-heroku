@@ -98,15 +98,15 @@ io.on('connection',
 
         });
 
-        socket.on("join-room", async (roomName, userName, sessionID, userID) => {
+        socket.on("join-room", (roomName, userName, sessionID, userID) => {
             if (!sessionID) {
                 alert("no session id");
             } else {
-                const session = await sessionStore.findSession(sessionID);
+                const session = sessionStore.findSession(socket.sessionID);
                 console.log("session data below");
                 console.dir(session);
                 console.log("session data above");
-                socket.username = session.username;
+                socket.username = userName;
                 socket.join(roomName);
                 let socketRoomName = roomName
 
