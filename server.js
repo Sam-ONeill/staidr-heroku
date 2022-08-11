@@ -106,77 +106,40 @@ io.on('connection',
         socket.on('username', (username) =>{
 
             getAllSessions();
-            console.log("aboev if statement "+JSON.stringify(users));
-            console.log("amount" + users.length);
-
             socketUserName = username;
-            const find = users.find(user => user.username === socketUserName);
 
-            console.log("find"+JSON.stringify(find));
-            if(find == null){ // User has not logged in before
-                socket.sessionID = randomId();
-                socket.userID = randomId();
-                console.log("userid " + socket.userID);
-                console.log("created new session");
-                saveOneSession(socket.sessionID, socket.userID, socketUserName, true);
-                socket.emit('SessionData',{
-                    sessionID: socket.sessionID,
-                    userID: socket.userID,
-                });
-            }
-            else{ // User has logged in before
-                const index = users.findIndex((item) => item.username === socketUserName);
-                console.log("the session id "+ users[index].sessionID);
+            if(socketUserName != null) {
 
-                socket.emit('SessionData',{
-                    sessionID: users[index].sessionID,
-                    userID: users[index].userID,
-                });
+                if (users.find(user => user.username === socketUserName) === null) { // User has not logged in before
+                    socket.sessionID = randomId();
+                    socket.userID = randomId();
+                    saveOneSession(socket.sessionID, socket.userID, socketUserName, true);
+                    socket.emit('SessionData', {
+                        sessionID: socket.sessionID,
+                        userID: socket.userID,
+                    });
+                } else { // User has logged in before
+                    const index = users.findIndex((item) => item.username === socketUserName);
+                    console.log("the session id " + users[index].sessionID);
+                    socket.emit('SessionData', {
+                        sessionID: users[index].sessionID,
+                        userID: users[index].userID,
+                    });
+                    socket.sessionID = users[index].sessionID;
+                    socket.userID =users[index].userID;
+                }
             }
         });
-
-        getAllSessions();
-        console.log("below if statement "+JSON.stringify(users));
-        console.log("amount"+users.length);
-
-       if(socketUserName != null) {
-
-
-
             /*
             If i set the session on the group screen
              the client should be able to access that from any group
              */
-
-            socket.on("Joined-group", (userName) => {
-
-
-                if (!userName) {
-                    console.log("no username found");
-                } else {
-                    const sessionID = socket.sessionID;
-                    console.log("is there a socket? " + sessionID);
-                    if (sessionID) {
-                        // find existing session
-                        session = sessionStore.findSession(sessionID);
-                        if (session) {
-                            socket.sessionID = sessionID;
-                            socket.userID = session.userID;
-                        }
-                        socket.emit("session", {
-                            sessionID: socket.sessionID,
-                            userID: socket.userID,
-                        });
-                    }
-
-                }
-            });
-
+            /*
             socket.on("join-room", (roomName, userName, sessionID, userID) => {
 
 
                 if (!sessionID) {
-                    alert("no session id");
+                    console.log("no session id");
                 } else {
                     //session = sessionStore.findSession(socket.sessionID);
                     socket.join(roomName);
@@ -228,6 +191,7 @@ io.on('connection',
                     console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
                 });
             });
+            */
 
             socket.on("disconnect", async () => {
                 const matchingSockets = await io.in(socket.userID).allSockets();
@@ -238,12 +202,11 @@ io.on('connection',
                     // update the connection status of the session
                     sessionStore.saveSession(socket.sessionID, {
                         userID: socket.userID,
-                        username: socket.username,
+                        username: socketUserName,
                         connected: false,
                     });
                 }
             });
-        }
     });
 
 
