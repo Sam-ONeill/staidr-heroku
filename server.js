@@ -128,6 +128,8 @@ io.on('connection',
             }
         });
 
+        getAllSessions();
+        console.log(users);
         console.log("CHECK user name" +socketUserName);
         if(socketUserName != null) {
             console.log("CHECK user name 2" +socketUserName);
