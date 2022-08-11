@@ -87,7 +87,6 @@ function getAllSessions(){
     });
 }
 
-saveOneSession("1","2","a",true);
 getAllSessions();
 console.log("at begining"+JSON.stringify(users));
 console.log("amount"+users.length);
@@ -112,18 +111,9 @@ io.on('connection',
 
             socketUserName = username;
             const find = users.find(user => user.username === socketUserName);
+
             console.log("find"+JSON.stringify(find));
-            if(find != null){ // User has logged in before
-                const index = users.findIndex((item) => item.username === socketUserName);
-                console.log("the session id"+ users[index].sessionID);
-
-                socket.emit('SessionData',{
-                    sessionID: users[index].sessionID,
-                    userID: users[index].userID,
-                });
-
-            }
-            else{ // User has not logged in before
+            if(find == null){ // User has not logged in before
                 socket.sessionID = randomId();
                 socket.userID = randomId();
                 console.log("userid " + socket.userID);
@@ -132,6 +122,15 @@ io.on('connection',
                 socket.emit('SessionData',{
                     sessionID: socket.sessionID,
                     userID: socket.userID,
+                });
+            }
+            else{ // User has logged in before
+                const index = users.findIndex((item) => item.username === socketUserName);
+                console.log("the session id "+ users[index].sessionID);
+
+                socket.emit('SessionData',{
+                    sessionID: users[index].sessionID,
+                    userID: users[index].userID,
                 });
             }
         });
