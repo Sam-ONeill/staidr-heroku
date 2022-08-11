@@ -34,7 +34,8 @@ let session;
 
 let socketGroupName = "CS620C"
 let socketRoomName = ""
-let socketUserName = ""
+
+let socketUserName = "" // global username variable
 //console.log(query);
 //Begin SocketIO init
 
@@ -65,7 +66,12 @@ function saveOneSession(sessionID,userID,username,connected){
         userID: userID,
         username: username,
         connected: connected,
+        sessionID: sessionID,
     });
+}
+function getOneSession(sessionID){
+     session = sessionStore.findSession(sessionID);
+     return session;
 }
 
 function getAllSessions(){
@@ -76,10 +82,15 @@ function getAllSessions(){
                 userID: session.userID,
                 username: session.username,
                 connected: session.connected,
+                sessionID: session.sessionID,
             });
         }
     });
 }
+
+saveOneSession("1","2","a",true);
+getAllSessions();
+console.log(users);
 
 
 //User based functions
@@ -94,7 +105,27 @@ io.on('connection',
         //check if user has signed in before
         socket.on('username', (username) =>{
             socketUserName = username;
-            socket.emit('SessionData',("sessionID,userID"));
+            if(users.includes(socketUserName)){ // User has logged in before
+                const index = users.indexOf(socketUserName);
+                console.log("the session id"+ users[index].sessionID);
+
+                socket.emit('SessionData',{
+                    sessionID: users[index].sessionID,
+                    userID: users[index].userID,
+                });
+
+            }
+            else{ // User has not logged in before
+                socket.sessionID = randomId();
+                socket.userID = randomId();
+                console.log("userid " + socket.userID);
+                console.log("created new session");
+                saveOneSession(socket.sessionID, socket.userID, socketUserName, true);
+                socket.emit('SessionData',{
+                    sessionID: socket.sessionID,
+                    userID: socket.userID,
+                });
+            }
         });
 
         console.log("CHECK user name" +socketUserName);
