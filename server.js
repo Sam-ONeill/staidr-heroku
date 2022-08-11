@@ -104,9 +104,14 @@ io.on('connection',
 
         //check if user has signed in before
         socket.on('username', (username) =>{
+
+            getAllSessions();
+
             socketUserName = username;
-            if(users.includes(socketUserName)){ // User has logged in before
-                const index = users.indexOf(socketUserName);
+            const find = users.find(socketUserName);
+            console.log("find"+find);
+            if(find){ // User has logged in before
+                const index = users.findIndex((item) => item.username === socketUserName);
                 console.log("the session id"+ users[index].sessionID);
 
                 socket.emit('SessionData',{
