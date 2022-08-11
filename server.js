@@ -93,13 +93,13 @@ io.on('connection',
 
         //check if user has signed in before
         socket.on('username', (username) =>{
-            socket.username = username;
+            socketUserName = username;
             socket.emit('SessionData',("sessionID,userID"));
         });
 
-        console.log("CHECK user name" +socket.username);
-        if(socket.username != null) {
-            console.log("CHECK user name" +socket.username);
+        console.log("CHECK user name" +socketUserName);
+        if(socketUserName != null) {
+            console.log("CHECK user name 2" +socketUserName);
 
 
 
