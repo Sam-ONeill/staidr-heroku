@@ -98,58 +98,58 @@ io.on('connection',
 
         });
 
-        socket.on("join-room", (roomName, userName, sessionID, userID) => {
+        socket.on("join-room", async (roomName, userName, sessionID, userID) => {
             if (!sessionID) {
                 alert("no session id");
-            }else{
-            const session = sessionStore.findSession(sessionID);
-            console.log("session data below");
-            console.dir(session);
-            console.log("session data above");
-            socket.username = session.username;
-            socket.join(roomName);
-            let socketRoomName = roomName
+            } else {
+                const session = await sessionStore.findSession(sessionID);
+                console.log("session data below");
+                console.dir(session);
+                console.log("session data above");
+                socket.username = session.username;
+                socket.join(roomName);
+                let socketRoomName = roomName
 
 
-            const users = [];
-            sessionStore.findAllSessions().forEach((session) => {
-                if (socket.username != null) {
-                    users.push({
-                        userID: session.userID,
-                        username: session.username,
-                        connected: session.connected,
-                    });
-                }
-            });
-            socket.emit("session", {
-                sessionID: socket.sessionID,
-                userID: socket.userID,
-            });
-
-            socket.emit("users", users);
-
-            socket.broadcast.emit("user connected", {
-                userID: socket.userID,
-                username: socket.username,
-                connected: true,
-            });
-
-            console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
-            //increase active users in room by 1
-            Group.findOneAndUpdate({
-                "Name": socketGroupName,
-                "Rooms.Room_name": socketRoomName
-            }, {$inc: {'Rooms.$.Active_users': 1}}, {
-                rawResult: true // Return the raw result from the MongoDB driver
-            })
-
-            socket.on("Room message", ({content}) => {
-                socket.to(socketRoomName).emit("message", {
-                    content,
-                    from: socket.userID,
+                const users = [];
+                sessionStore.findAllSessions().forEach((session) => {
+                    if (socket.username != null) {
+                        users.push({
+                            userID: session.userID,
+                            username: session.username,
+                            connected: session.connected,
+                        });
+                    }
                 });
-            });
-        }
+                socket.emit("session", {
+                    sessionID: socket.sessionID,
+                    userID: socket.userID,
+                });
+
+                socket.emit("users", users);
+
+                socket.broadcast.emit("user connected", {
+                    userID: socket.userID,
+                    username: socket.username,
+                    connected: true,
+                });
+
+                console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
+                //increase active users in room by 1
+                Group.findOneAndUpdate({
+                    "Name": socketGroupName,
+                    "Rooms.Room_name": socketRoomName
+                }, {$inc: {'Rooms.$.Active_users': 1}}, {
+                    rawResult: true // Return the raw result from the MongoDB driver
+                })
+
+                socket.on("Room message", ({content}) => {
+                    socket.to(socketRoomName).emit("message", {
+                        content,
+                        from: socket.userID,
+                    });
+                });
+            }
         });
         socket.on("ping", () => {
             console.log("ping");
