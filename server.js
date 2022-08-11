@@ -85,146 +85,152 @@ function getAllSessions(){
 //User based functions
 io.on('connection',
     (socket) => {
-        //check if user has signed in before
-        socket.on('username', (username) =>{
-            socket.username = username;
-            socket.emit('SessionData',("sessionID,userID"));
-        });
-        console.log("CHECK user name" +socket.username);
-
         //print all events to console
         socket.onAny((event, ...args) => {
             console.log(event, args);
         });
 
-        /*
-        If i set the session on the group screen
-         the client should be able to access that from any group
-         */
 
-        socket.on("Joined-group", (userName) => {
+        //check if user has signed in before
+        socket.on('username', (username) =>{
+            socket.username = username;
+            socket.emit('SessionData',("sessionID,userID"));
+        });
+
+        console.log("CHECK user name" +socket.username);
+        if(socket.username != null) {
+            console.log("CHECK user name" +socket.username);
 
 
-            if(!userName){
-                console.log("no username found");
-            }else {
-                const sessionID = socket.sessionID;
-                console.log("is there a socket? " + sessionID);
-                if (sessionID) {
-                    // find existing session
-                    session = sessionStore.findSession(sessionID);
-                    if (session) {
-                        socket.sessionID = sessionID;
-                        socket.userID = session.userID;
-                    }
+
+            /*
+            If i set the session on the group screen
+             the client should be able to access that from any group
+             */
+
+            socket.on("Joined-group", (userName) => {
+
+
+                if (!userName) {
+                    console.log("no username found");
                 } else {
+                    const sessionID = socket.sessionID;
+                    console.log("is there a socket? " + sessionID);
+                    if (sessionID) {
+                        // find existing session
+                        session = sessionStore.findSession(sessionID);
+                        if (session) {
+                            socket.sessionID = sessionID;
+                            socket.userID = session.userID;
+                        }
+                    } else {
 
-                    // if there isn't an existing session
-                    // create new session
-                    socket.sessionID = randomId();
-                    socket.userID = randomId();
-                    console.log("userid " + socket.userID);
-                    console.log("created new session");
-                    sessionStore.saveSession(socket.sessionID, {
+                        // if there isn't an existing session
+                        // create new session
+                        socket.sessionID = randomId();
+                        socket.userID = randomId();
+                        console.log("userid " + socket.userID);
+                        console.log("created new session");
+                        sessionStore.saveSession(socket.sessionID, {
+                            userID: socket.userID,
+                            username: socket.username,
+                            connected: true,
+                        });
+                        const session = sessionStore.findSession(socket.sessionID);
+
+                        console.log("Session created" + session.username + " " + session.userID);
+                    }
+                    socket.emit("session", {
+                        sessionID: socket.sessionID,
+                        userID: socket.userID,
+                    });
+                }
+
+            });
+
+            socket.on("join-room", (roomName, userName, sessionID, userID) => {
+
+
+                if (!sessionID) {
+                    alert("no session id");
+                } else {
+                    session = sessionStore.findSession(socket.sessionID);
+                    socket.join(roomName);
+                    let socketRoomName = roomName
+
+
+                    const users = [];
+                    sessionStore.findAllSessions().forEach((session) => {
+                        if (socket.username != null) {
+                            users.push({
+                                userID: session.userID,
+                                username: session.username,
+                                connected: session.connected,
+                            });
+                        }
+                    });
+                    socket.emit("session", {
+                        sessionID: socket.sessionID,
+                        userID: socket.userID,
+                    });
+
+                    socket.emit("users", users);
+
+                    socket.broadcast.emit("user connected", {
                         userID: socket.userID,
                         username: socket.username,
                         connected: true,
                     });
-                    const session = sessionStore.findSession(socket.sessionID);
 
-                    console.log("Session created" + session.username + " " + session.userID);
-                }
-                socket.emit("session", {
-                    sessionID: socket.sessionID,
-                    userID: socket.userID,
-                });
-            }
+                    console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
+                    //increase active users in room by 1
+                    Group.findOneAndUpdate({
+                        "Name": socketGroupName,
+                        "Rooms.Room_name": socketRoomName
+                    }, {$inc: {'Rooms.$.Active_users': 1}}, {
+                        rawResult: true // Return the raw result from the MongoDB driver
+                    })
 
-        });
-
-        socket.on("join-room", (roomName, userName, sessionID, userID) => {
-
-
-            if (!sessionID) {
-                alert("no session id");
-            } else {
-                session = sessionStore.findSession(socket.sessionID);
-                socket.join(roomName);
-                let socketRoomName = roomName
-
-
-                const users = [];
-                sessionStore.findAllSessions().forEach((session) => {
-                    if (socket.username != null) {
-                        users.push({
-                            userID: session.userID,
-                            username: session.username,
-                            connected: session.connected,
+                    socket.on("Room message", ({content}) => {
+                        socket.to(socketRoomName).emit("message", {
+                            content,
+                            from: socket.userID,
                         });
-                    }
-                });
-                socket.emit("session", {
-                    sessionID: socket.sessionID,
-                    userID: socket.userID,
-                });
+                    });
+                }
+            });
+            socket.on("ping", () => {
+                console.log("ping");
+                socket.emit("pong");
+            });
 
-                socket.emit("users", users);
 
-                socket.broadcast.emit("user connected", {
-                    userID: socket.userID,
-                    username: socket.username,
-                    connected: true,
-                });
-
-                console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
-                //increase active users in room by 1
+            socket.on("leaveRoom", ({socketRoomName}) => {
                 Group.findOneAndUpdate({
                     "Name": socketGroupName,
                     "Rooms.Room_name": socketRoomName
-                }, {$inc: {'Rooms.$.Active_users': 1}}, {
+                }, {$inc: {'Rooms.$.Active_users': -1}}, {
                     rawResult: true // Return the raw result from the MongoDB driver
-                })
-
-                socket.on("Room message", ({content}) => {
-                    socket.to(socketRoomName).emit("message", {
-                        content,
-                        from: socket.userID,
-                    });
+                }).then(() => {
+                    console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
                 });
-            }
-        });
-        socket.on("ping", () => {
-            console.log("ping");
-            socket.emit("pong");
-        });
-
-
-        socket.on("leaveRoom", ({socketRoomName}) => {
-            Group.findOneAndUpdate({
-                "Name": socketGroupName,
-                "Rooms.Room_name": socketRoomName
-            }, {$inc: {'Rooms.$.Active_users': -1}}, {
-                rawResult: true // Return the raw result from the MongoDB driver
-            }).then(() => {
-                console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
             });
-        });
 
-        socket.on("disconnect", async () => {
-            const matchingSockets = await io.in(socket.userID).allSockets();
-            const isDisconnected = matchingSockets.size === 0;
-            if (isDisconnected) {
-                // notify other users
-                socket.broadcast.emit("user disconnected", socket.userID);
-                // update the connection status of the session
-                sessionStore.saveSession(socket.sessionID, {
-                    userID: socket.userID,
-                    username: socket.username,
-                    connected: false,
-                });
-            }
-        });
-
+            socket.on("disconnect", async () => {
+                const matchingSockets = await io.in(socket.userID).allSockets();
+                const isDisconnected = matchingSockets.size === 0;
+                if (isDisconnected) {
+                    // notify other users
+                    socket.broadcast.emit("user disconnected", socket.userID);
+                    // update the connection status of the session
+                    sessionStore.saveSession(socket.sessionID, {
+                        userID: socket.userID,
+                        username: socket.username,
+                        connected: false,
+                    });
+                }
+            });
+        }
     });
 
 
