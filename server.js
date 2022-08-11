@@ -109,7 +109,7 @@ io.on('connection',
             socketUserName = username;
 
             if(socketUserName != null) {
-
+                console.log("test 1" +users.find(user => user.username === socketUserName));
                 if (users.find(user => user.username === socketUserName) === null) { // User has not logged in before
                     socket.sessionID = randomId();
                     socket.userID = randomId();
@@ -120,7 +120,7 @@ io.on('connection',
                     });
                 } else { // User has logged in before
                     const index = users.findIndex((item) => item.username === socketUserName);
-                    console.log("the session id " + users[index].sessionID);
+                    console.log("test 2" + index);
                     socket.emit('SessionData', {
                         sessionID: users[index].sessionID,
                         userID: users[index].userID,
