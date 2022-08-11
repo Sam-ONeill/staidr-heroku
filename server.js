@@ -86,7 +86,10 @@ function getAllSessions(){
 io.on('connection',
     (socket) => {
         //check if user has signed in before
-
+        socket.on('username', (username) =>{
+            socket.username = username
+            socket.emit('SessionData',("sessionID,userID"));
+        });
         console.log("CHECK user name" +socket.username);
 
         //print all events to console
@@ -113,7 +116,6 @@ io.on('connection',
                     if (session) {
                         socket.sessionID = sessionID;
                         socket.userID = session.userID;
-                        socket.username = session.username;
                     }
                 } else {
 
@@ -121,7 +123,6 @@ io.on('connection',
                     // create new session
                     socket.sessionID = randomId();
                     socket.userID = randomId();
-                    socket.username = userName
                     console.log("userid " + socket.userID);
                     console.log("created new session");
                     sessionStore.saveSession(socket.sessionID, {
@@ -148,7 +149,6 @@ io.on('connection',
                 alert("no session id");
             } else {
                 session = sessionStore.findSession(socket.sessionID);
-                socket.username = userName;
                 socket.join(roomName);
                 let socketRoomName = roomName
 
