@@ -87,7 +87,7 @@ io.on('connection',
     (socket) => {
         //check if user has signed in before
         socket.on('username', (username) =>{
-            socket.username = username
+            socket.username = username;
             socket.emit('SessionData',("sessionID,userID"));
         });
         console.log("CHECK user name" +socket.username);
