@@ -50,21 +50,15 @@ const io = SocketIO(server);
 
 // I want to test how session store saves sessions
 
+//theres an issue where the user is constanly recconecting and not remembering its session id and userid
+
+
 const users = [];
 
-sessionStore.saveSession("12345", {
-    userID: "ABCDEF",
-    username: "tesT",
-    connected: true,
-});
-
-sessionStore.saveSession("123454", {
-    userID: "ABCDEF2",
-    username: "tesT2",
-    connected: true,
-});
-
-
+// check if user has access to their userid & has logged in before
+// if they have reassign them there userid and session set connected to true
+// else create a user in session store
+// this should only be run once the first time they open the group once in the group they should keep the sessin id and user id through navigation route params
 
 function saveOneSession(sessionID,userID,username,connected){
     sessionStore.saveSession(sessionID, {
@@ -76,7 +70,7 @@ function saveOneSession(sessionID,userID,username,connected){
 
 function getAllSessions(){
     sessionStore.findAllSessions().forEach((session) => {
-        if (session.username != null) {
+        if (session.username != null ) {
             console.log("pushing users to user")
             users.push({
                 userID: session.userID,
@@ -87,19 +81,13 @@ function getAllSessions(){
     });
 }
 
-saveOneSession("77","ABCDEF3","test3",true );
-
-getAllSessions();
-
-console.log("all my users" +JSON.stringify(users));
 
 //User based functions
 io.on('connection',
     (socket) => {
-        saveOneSession("77","ABCDEF3","test4",true );
+        //check if user has signed in before
 
-        getAllSessions();
-        console.log("all my users in connection" +JSON.stringify(users));
+        console.log("CHECK user name" +socket.username);
 
         //print all events to console
         socket.onAny((event, ...args) => {
@@ -112,10 +100,7 @@ io.on('connection',
          */
 
         socket.on("Joined-group", (userName) => {
-            saveOneSession("77","ABCDEF3","test5",true );
 
-            getAllSessions();
-            console.log("all my users in joined group" +JSON.stringify(users));
 
             if(!userName){
                 console.log("no username found");
@@ -157,18 +142,12 @@ io.on('connection',
         });
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
-            saveOneSession("77","ABCDEF3","test6",true );
 
-            getAllSessions();
-            console.log("all my users in join room" +JSON.stringify(users));
 
             if (!sessionID) {
                 alert("no session id");
             } else {
                 session = sessionStore.findSession(socket.sessionID);
-                console.log("session data below");
-                console.dir(session);
-                console.log("session data above");
                 socket.username = userName;
                 socket.join(roomName);
                 let socketRoomName = roomName
