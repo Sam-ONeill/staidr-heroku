@@ -103,6 +103,9 @@ io.on('connection',
                 alert("no session id");
             }else{
             const session = sessionStore.findSession(sessionID);
+            console.log("session data below");
+            console.dir(session);
+            console.log("session data above");
             socket.username = session.username;
             socket.join(roomName);
             let socketRoomName = roomName
