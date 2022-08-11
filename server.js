@@ -91,6 +91,8 @@ function getAllSessions(){
 saveOneSession("1","2","a",true);
 getAllSessions();
 console.log(users);
+console.log("amount"+users.length);
+
 
 
 //User based functions
@@ -135,6 +137,8 @@ io.on('connection',
 
         getAllSessions();
         console.log(users);
+        console.log("amount"+users.length);
+
         console.log("CHECK user name" +socketUserName);
         if(socketUserName != null) {
             console.log("CHECK user name 2" +socketUserName);
