@@ -90,7 +90,7 @@ function getAllSessions(){
 
 saveOneSession("1","2","a",true);
 getAllSessions();
-console.log(users);
+console.log("at begining"+users);
 console.log("amount"+users.length);
 
 
@@ -108,6 +108,8 @@ io.on('connection',
         socket.on('username', (username) =>{
 
             getAllSessions();
+            console.log("aboev if statement "+users)
+            console.log("amount" + users.length);
 
             socketUserName = username;
             const find = users.find(user => user.username === socketUserName);
@@ -136,12 +138,10 @@ io.on('connection',
         });
 
         getAllSessions();
-        console.log(users);
+        console.log("below if statement "+users)
         console.log("amount"+users.length);
 
-        console.log("CHECK user name" +socketUserName);
-        if(socketUserName != null) {
-            console.log("CHECK user name 2" +socketUserName);
+       if(socketUserName != null) {
 
 
 
@@ -165,29 +165,13 @@ io.on('connection',
                             socket.sessionID = sessionID;
                             socket.userID = session.userID;
                         }
-                    } else {
-
-                        // if there isn't an existing session
-                        // create new session
-                        socket.sessionID = randomId();
-                        socket.userID = randomId();
-                        console.log("userid " + socket.userID);
-                        console.log("created new session");
-                        sessionStore.saveSession(socket.sessionID, {
+                        socket.emit("session", {
+                            sessionID: socket.sessionID,
                             userID: socket.userID,
-                            username: socket.username,
-                            connected: true,
                         });
-                        const session = sessionStore.findSession(socket.sessionID);
-
-                        console.log("Session created" + session.username + " " + session.userID);
                     }
-                    socket.emit("session", {
-                        sessionID: socket.sessionID,
-                        userID: socket.userID,
-                    });
-                }
 
+                }
             });
 
             socket.on("join-room", (roomName, userName, sessionID, userID) => {
@@ -196,21 +180,10 @@ io.on('connection',
                 if (!sessionID) {
                     alert("no session id");
                 } else {
-                    session = sessionStore.findSession(socket.sessionID);
+                    //session = sessionStore.findSession(socket.sessionID);
                     socket.join(roomName);
                     let socketRoomName = roomName
 
-
-                    const users = [];
-                    sessionStore.findAllSessions().forEach((session) => {
-                        if (socket.username != null) {
-                            users.push({
-                                userID: session.userID,
-                                username: session.username,
-                                connected: session.connected,
-                            });
-                        }
-                    });
                     socket.emit("session", {
                         sessionID: socket.sessionID,
                         userID: socket.userID,
