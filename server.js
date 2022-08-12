@@ -114,7 +114,7 @@ io.on('connection',
                     socket.sessionID = randomId();
                     socket.userID = randomId();
                     saveOneSession(socket.sessionID, socket.userID, socketUserName, true);
-                    socket.emit('SessionData', {
+                    socket.emit('sessionData', {
                         sessionID: socket.sessionID,
                         userID: socket.userID,
                     });
@@ -134,31 +134,35 @@ io.on('connection',
             If i set the session on the group screen
              the client should be able to access that from any group
              */
-            /*
+
             socket.on("join-room", (roomName, userName, sessionID, userID) => {
 
 
                 if (!sessionID) {
                     console.log("no session id");
                 } else {
-                    //session = sessionStore.findSession(socket.sessionID);
                     socket.join(roomName);
                     let socketRoomName = roomName
 
-                    socket.emit("session", {
-                        sessionID: socket.sessionID,
-                        userID: socket.userID,
+                    /*
+                    not sure if needed
+
+                    socket.emit("sessionData", {
+                        sessionID: sessionID,
+                        userID: userID,
                     });
+                    */
+                    getAllSessions();
 
                     socket.emit("users", users);
 
                     socket.broadcast.emit("user connected", {
-                        userID: socket.userID,
-                        username: socket.username,
+                        userID: userID,
+                        username: userName,
                         connected: true,
                     });
 
-                    console.log(`socket ${socket.id} has joined room ${socketRoomName} under username ${socket.username}`);
+                    console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
                     //increase active users in room by 1
                     Group.findOneAndUpdate({
                         "Name": socketGroupName,
@@ -170,15 +174,13 @@ io.on('connection',
                     socket.on("Room message", ({content}) => {
                         socket.to(socketRoomName).emit("message", {
                             content,
-                            from: socket.userID,
+                            from: userID,
                         });
                     });
                 }
             });
-            socket.on("ping", () => {
-                console.log("ping");
-                socket.emit("pong");
-            });
+
+
 
 
             socket.on("leaveRoom", ({socketRoomName}) => {
@@ -191,7 +193,7 @@ io.on('connection',
                     console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
                 });
             });
-            */
+
 
             socket.on("disconnect", async () => {
                 const matchingSockets = await io.in(socket.userID).allSockets();
