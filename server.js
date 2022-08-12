@@ -172,7 +172,13 @@ io.on('connection',
                     })
 
                     socket.on("Room message", ({content}) => {
+                        // sends to all but sender
                         socket.to(socketRoomName).emit("message", {
+                            content,
+                            from: userID,
+                        });
+                        // sends to all including sender
+                        socket.in(socketRoomName).emit("message", {
                             content,
                             from: userID,
                         });
