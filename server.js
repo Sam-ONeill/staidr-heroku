@@ -174,9 +174,7 @@ io.on('connection',
         });
         socket.on("Room-message", ({content,to,from}) => {
             console.log("room message function"+ to+" " + from);
-            io.in(to).allSockets().then(result => {
-                console.log("num in room " + result.size)
-            })
+
             socket.emit("message", {
                 content,
                 from: from,
@@ -201,10 +199,12 @@ io.on('connection',
                 "Rooms.Room_name": socketRoomName
             }, {$inc: {'Rooms.$.Active_users': -1}}, {
                 rawResult: true // Return the raw result from the MongoDB driver
-            }).then(() => {
-                console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
-            });
+            })
             socket.leave(socketRoomName);
+            io.in(socketRoomName).allSockets().then(result => {
+                console.log("num in room " + result.size)
+            })
+
         });
 
 
