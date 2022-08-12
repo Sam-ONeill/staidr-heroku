@@ -204,6 +204,7 @@ io.on('connection',
             }).then(() => {
                 console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
             });
+            socket.leave(socketRoomName);
         });
 
 
