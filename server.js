@@ -172,25 +172,25 @@ io.on('connection',
                 })
             }
         });
-        socket.on("Room-message", ({content}) => {
-            console.log("room message function");
-            io.in(socketRoomName).allSockets().then(result => {
+        socket.on("Room-message", ({content,to,from}) => {
+            console.log("room message function"+ to+" " + from);
+            io.in(to).allSockets().then(result => {
                 console.log("num in room " + result.size)
             })
             socket.emit("message", {
                 content,
-                from: userID,
+                from: from,
             });
 
             // sends to all but sender
-            socket.to(socketRoomName).emit("message", {
+            socket.to(to).emit("message", {
                 content,
-                from: userID,
+                from: from,
             });
             // sends to all including sender
-            io.in(socketRoomName).emit("message", {
+            io.in(to).emit("message", {
                 content,
-                from: userID,
+                from: from,
             });
         });
 
