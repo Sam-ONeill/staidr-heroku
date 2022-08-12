@@ -196,13 +196,13 @@ io.on('connection',
 
 
         socket.on("leaveRoom", ({socketRoomName}) => {
-           let res = Group.findOneAndUpdate({
+            let res = Group.findOneAndUpdate({
                 "Name": socketGroupName,
                 "Rooms.Room_name": socketRoomName
-            }, {$inc: {'Rooms.$.Active_users': -1}}, {
+            }, {$inc: {'Rooms.$.Active_users': 3}}, {
                 new: true,
                 rawResult: true // Return the raw result from the MongoDB driver
-            }).then(console.log("updated down in database"));
+            }).then(console.log("updated up in database"));
             console.log(JSON.stringify(res));
 
             socket.leave(socketRoomName);
