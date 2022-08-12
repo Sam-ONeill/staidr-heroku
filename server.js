@@ -173,6 +173,10 @@ io.on('connection',
                     })
 
                     socket.on("Room-message", ({content}) => {
+                        socket.emit("message", {
+                            content,
+                            from: userID,
+                        });
                         io.in(socketRoomName).allSockets().then(result=>{
                             console.log(result.size) })
                         // sends to all but sender
