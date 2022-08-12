@@ -43,7 +43,6 @@ const io = SocketIO(server);
 //socketIO functions
 
 
-
 // socket.IO server
 
 //General functions on startup
@@ -61,7 +60,7 @@ const users = [];
 // else create a user in session store
 // this should only be run once the first time they open the group once in the group they should keep the sessin id and user id through navigation route params
 
-function saveOneSession(sessionID,userID,username,connected){
+function saveOneSession(sessionID, userID, username, connected) {
     sessionStore.saveSession(sessionID, {
         userID: userID,
         username: username,
@@ -69,14 +68,15 @@ function saveOneSession(sessionID,userID,username,connected){
         sessionID: sessionID,
     });
 }
-function getOneSession(sessionID){
-     session = sessionStore.findSession(sessionID);
-     return session;
+
+function getOneSession(sessionID) {
+    session = sessionStore.findSession(sessionID);
+    return session;
 }
 
-function getAllSessions(){
+function getAllSessions() {
     sessionStore.findAllSessions().forEach((session) => {
-        if (session.username != null ) {
+        if (session.username != null) {
             users.push({
                 userID: session.userID,
                 username: session.username,
@@ -88,9 +88,8 @@ function getAllSessions(){
 }
 
 getAllSessions();
-console.log("at begining"+JSON.stringify(users));
-console.log("amount"+users.length);
-
+console.log("at begining" + JSON.stringify(users));
+console.log("amount" + users.length);
 
 
 //User based functions
@@ -103,13 +102,13 @@ io.on('connection',
 
 
         //check if user has signed in before
-        socket.on('username', (username) =>{
+        socket.on('username', (username) => {
 
             getAllSessions();
             socketUserName = username;
 
-            if(socketUserName != null) {
-                console.log("test 1" +users.find(user => user.username === socketUserName));
+            if (socketUserName != null) {
+                console.log("test 1" + users.find(user => user.username === socketUserName));
                 if (users.find(user => user.username === socketUserName) === undefined) { // User has not logged in before
                     socket.sessionID = randomId();
                     socket.userID = randomId();
@@ -126,112 +125,103 @@ io.on('connection',
                         userID: users[index].userID,
                     });
                     socket.sessionID = users[index].sessionID;
-                    socket.userID =users[index].userID;
+                    socket.userID = users[index].userID;
                 }
             }
         });
-            /*
-            If i set the session on the group screen
-             the client should be able to access that from any group
-             */
+        /*
+        If i set the session on the group screen
+         the client should be able to access that from any group
+         */
 
-            socket.on("join-room", (roomName, userName, sessionID, userID) => {
-
-
-                if (!sessionID) {
-                    console.log("no session id");
-                } else {
-                    console.log("joining " + roomName)
-                    socket.join(roomName);
-                    let socketRoomName = roomName
-
-                    /*
-                    not sure if needed
-
-                    socket.emit("sessionData", {
-                        sessionID: sessionID,
-                        userID: userID,
-                    });
-                    */
-                    getAllSessions();
-
-                    socket.emit("users", users);
-
-                    socket.broadcast.emit("user connected", {
-                        userID: userID,
-                        username: userName,
-                        connected: true,
-                    });
-
-                    console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
-                    //increase active users in room by 1
-                    Group.findOneAndUpdate({
-                        "Name": socketGroupName,
-                        "Rooms.Room_name": socketRoomName
-                    }, {$inc: {'Rooms.$.Active_users': 1}}, {
-                        rawResult: true // Return the raw result from the MongoDB driver
-                    })
-
-                    socket.on("Room-message", ({content}) => {
-                        console.log("room message function");
-                        io.in(socketRoomName).allSockets().then(result=>{
-                            console.log("num in room "+result.size) })
-                        socket.emit("message", {
-                            content,
-                            from: userID,
-                        });
-
-                        // sends to all but sender
-                        socket.to(socketRoomName).emit("message", {
-                            content,
-                            from: userID,
-                        });
-                        // sends to all including sender
-                        io.in(socketRoomName).emit("message", {
-                            content,
-                            from: userID,
-                        });
-                    });
-                }
-            });
+        socket.on("join-room", (roomName, userName, sessionID, userID) => {
 
 
+            if (!sessionID) {
+                console.log("no session id");
+            } else {
+                console.log("joining " + roomName)
+                socket.join(roomName);
+                let socketRoomName = roomName
 
+                /*
+                not sure if needed
 
-            socket.on("leaveRoom", ({socketRoomName}) => {
+                socket.emit("sessionData", {
+                    sessionID: sessionID,
+                    userID: userID,
+                });
+                */
+                getAllSessions();
+
+                socket.emit("users", users);
+
+                socket.broadcast.emit("user connected", {
+                    userID: userID,
+                    username: userName,
+                    connected: true,
+                });
+
+                console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
+                //increase active users in room by 1
                 Group.findOneAndUpdate({
                     "Name": socketGroupName,
                     "Rooms.Room_name": socketRoomName
-                }, {$inc: {'Rooms.$.Active_users': -1}}, {
+                }, {$inc: {'Rooms.$.Active_users': 1}}, {
                     rawResult: true // Return the raw result from the MongoDB driver
-                }).then(() => {
-                    console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
+                })
+            }
+        });
+        socket.on("Room-message", ({content}) => {
+            console.log("room message function");
+            io.in(socketRoomName).allSockets().then(result => {
+                console.log("num in room " + result.size)
+            })
+            socket.emit("message", {
+                content,
+                from: userID,
+            });
+
+            // sends to all but sender
+            socket.to(socketRoomName).emit("message", {
+                content,
+                from: userID,
+            });
+            // sends to all including sender
+            io.in(socketRoomName).emit("message", {
+                content,
+                from: userID,
+            });
+        });
+
+
+        socket.on("leaveRoom", ({socketRoomName}) => {
+            Group.findOneAndUpdate({
+                "Name": socketGroupName,
+                "Rooms.Room_name": socketRoomName
+            }, {$inc: {'Rooms.$.Active_users': -1}}, {
+                rawResult: true // Return the raw result from the MongoDB driver
+            }).then(() => {
+                console.log(`Ran and disconnected i guess ${socketGroupName} ${socketRoomName}`);
+            });
+        });
+
+
+        socket.on("disconnect", async () => {
+            const matchingSockets = await io.in(socket.userID).allSockets();
+            const isDisconnected = matchingSockets.size === 0;
+            if (isDisconnected) {
+                // notify other users
+                socket.broadcast.emit("user disconnected", socket.userID);
+                // update the connection status of the session
+                sessionStore.saveSession(socket.sessionID, {
+                    userID: socket.userID,
+                    username: socketUserName,
+                    connected: false,
                 });
-            });
-
-
-            socket.on("disconnect", async () => {
-                const matchingSockets = await io.in(socket.userID).allSockets();
-                const isDisconnected = matchingSockets.size === 0;
-                if (isDisconnected) {
-                    // notify other users
-                    socket.broadcast.emit("user disconnected", socket.userID);
-                    // update the connection status of the session
-                    sessionStore.saveSession(socket.sessionID, {
-                        userID: socket.userID,
-                        username: socketUserName,
-                        connected: false,
-                    });
-                }
-            });
+            }
+        });
     });
-
-
-
-
-
-
-
 
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
