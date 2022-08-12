@@ -195,7 +195,12 @@ io.on('connection',
         });
 
 
-        socket.on("leaveRoom", (socketRoomName) => {
+        socket.on("leaveRoom", (socketRoomName, userID, userName) => {
+            socket.broadcast.emit("user left room", {
+                userID: userID,
+                username: userName,
+                connected: false,
+            });
             console.log(socketGroupName+ socketRoomName);
             let res = Group.findOneAndUpdate({
                 "Name": socketGroupName,
@@ -203,12 +208,6 @@ io.on('connection',
             }, {$inc: {'Rooms.$.Active_users': -1}}, {
                 new: true,
                 rawResult: true // Return the raw result from the MongoDB driver
-            },(err,doc)=>{
-                if (err) {
-                    console.log("Something wrong when updating data!");
-                }
-
-                console.log(doc);
             }).then(console.log("updated down in database"));
             console.log(JSON.stringify(res));
 
