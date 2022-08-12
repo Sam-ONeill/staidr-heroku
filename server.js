@@ -168,6 +168,7 @@ io.on('connection',
                     "Name": socketGroupName,
                     "Rooms.Room_name": socketRoomName
                 }, {$inc: {'Rooms.$.Active_users': 1}}, {
+                   new: true,
                     rawResult: true // Return the raw result from the MongoDB driver
                 }).then(console.log("Added to database"));
                console.log(JSON.stringify(res));
