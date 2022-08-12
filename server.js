@@ -170,7 +170,7 @@ io.on('connection',
                 }, {$inc: {'Rooms.$.Active_users': 1}}, {
                    new: true,
                     rawResult: true // Return the raw result from the MongoDB driver
-                }).then(console.log("Added to database"));
+                }).then(console.log("updated up in database"));
                console.log(JSON.stringify(res));
             }
         });
@@ -196,12 +196,15 @@ io.on('connection',
 
 
         socket.on("leaveRoom", ({socketRoomName}) => {
-            Group.findOneAndUpdate({
+           let res = Group.findOneAndUpdate({
                 "Name": socketGroupName,
                 "Rooms.Room_name": socketRoomName
             }, {$inc: {'Rooms.$.Active_users': -1}}, {
+                new: true,
                 rawResult: true // Return the raw result from the MongoDB driver
-            })
+            }).then(console.log("updated down in database"));
+            console.log(JSON.stringify(res));
+
             socket.leave(socketRoomName);
             io.in(socketRoomName).allSockets().then(result => {
                 console.log("num in room " + result.size)
