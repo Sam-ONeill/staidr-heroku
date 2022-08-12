@@ -172,7 +172,7 @@ io.on('connection',
                         rawResult: true // Return the raw result from the MongoDB driver
                     })
 
-                    socket.on("Room message", ({content}) => {
+                    socket.on("Room-message", ({content}) => {
                         io.in(socketRoomName).allSockets().then(result=>{
                             console.log(result.size) })
                         // sends to all but sender
