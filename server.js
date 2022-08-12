@@ -164,12 +164,13 @@ io.on('connection',
 
                 console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
                 //increase active users in room by 1
-                Group.findOneAndUpdate({
+               let res = Group.findOneAndUpdate({
                     "Name": socketGroupName,
                     "Rooms.Room_name": socketRoomName
                 }, {$inc: {'Rooms.$.Active_users': 1}}, {
                     rawResult: true // Return the raw result from the MongoDB driver
-                })
+                }).then(console.log("Added to database"));
+               console.log(JSON.stringify(res));
             }
         });
         socket.on("Room-message", ({content,to,from}) => {
