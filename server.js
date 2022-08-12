@@ -141,6 +141,7 @@ io.on('connection',
                 if (!sessionID) {
                     console.log("no session id");
                 } else {
+                    console.log("joining " + roomName)
                     socket.join(roomName);
                     let socketRoomName = roomName
 
@@ -172,13 +173,15 @@ io.on('connection',
                     })
 
                     socket.on("Room message", ({content}) => {
+                        io.in(socketRoomName).allSockets().then(result=>{
+                            console.log(result.size) })
                         // sends to all but sender
                         socket.to(socketRoomName).emit("message", {
                             content,
                             from: userID,
                         });
                         // sends to all including sender
-                        socket.in(socketRoomName).emit("message", {
+                        io.in(socketRoomName).emit("message", {
                             content,
                             from: userID,
                         });
