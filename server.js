@@ -209,9 +209,9 @@ io.on('connection',
                 rawResult: true // Return the raw result from the MongoDB driver
             }).then(console.log(""))
 
-            console.log("rooms"+socket.rooms);
+            console.log("rooms"+JSON.stringify(socket.rooms));
 
-            io.socket.leave(socketRoomName);
+            socket.leave(socketRoomName);
 
 
             io.in(socketRoomName).allSockets().then(result => {
