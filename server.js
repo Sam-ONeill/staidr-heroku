@@ -170,7 +170,7 @@ io.on('connection',
                 }, {$inc: {'Rooms.$.Active_users': 1}}, {
                    new: true,
                     rawResult: true // Return the raw result from the MongoDB driver
-                })
+                }).then(console.log("num up"))
             }
         });
         socket.on("Room-message", ({content,to,from}) => {
@@ -207,7 +207,7 @@ io.on('connection',
             }, {$inc: {'Rooms.$.Active_users': -1}}, {
                 new: true,
                 rawResult: true // Return the raw result from the MongoDB driver
-            })
+            }).then(console.log("num up"))
 
             socket.leave(socketRoomName);
             io.in(socketRoomName).allSockets().then(result => {
