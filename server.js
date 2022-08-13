@@ -210,7 +210,11 @@ io.on('connection',
             }).then(console.log(""))
 
             console.log("rooms"+JSON.stringify(socket.rooms));
-
+            let roster = io.sockets.clients('chatroom1');
+            for ( let i in roster )
+            {
+                console.log('Username: ' + roster[i]);
+            }
             socket.leave(socketRoomName);
 
 
