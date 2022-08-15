@@ -209,6 +209,9 @@ io.on('connection',
                 rawResult: true // Return the raw result from the MongoDB driver
             }).then(console.log(""))
 
+            /*
+            Issue with finding what rooms the socket is in and then leaving them on leave-room
+
             console.log("rooms"+JSON.stringify(socket.rooms));
             let roster = io.sockets.clients('chatroom1');
             for ( let i in roster )
@@ -220,7 +223,7 @@ io.on('connection',
 
             io.in(socketRoomName).allSockets().then(result => {
                 console.log("num in room " + result.size)
-            })
+            }) */
 
         });
 
