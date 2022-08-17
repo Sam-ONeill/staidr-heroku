@@ -21,9 +21,12 @@ mongoose
 
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
+const messageRouter = require('./routes/messages');
+app.use('/messages',messageRouter)
 app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
+const Message = require('./models/message_model');
 // IMPORTS REQUIRED TO CREATE A SESSION ON THE SERVER INCLUDING RANDOM SESSION IDS
 const {InMemorySessionStore} = require('./sessionStore');
 const sessionStore = new InMemorySessionStore();
@@ -88,7 +91,7 @@ function getAllSessions() {
 }
 
 getAllSessions();
-console.log("at begining" + JSON.stringify(users));
+console.log("at beginning" + JSON.stringify(users));
 console.log("amount" + users.length);
 
 

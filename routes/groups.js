@@ -12,8 +12,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
-  const groups = await Group.findById(req.params.id);
+router.get('/:Group_name', async (req, res) => {
+  const groups = await Group.find({"Name":req.params.Group_name});
   try {
     res.send(groups);
   } catch (err) {
