@@ -29,6 +29,9 @@ let messageSchema = new Schema(
         User_id: {
             type: mongoose.Schema.Types.ObjectId,
         },
+        avatar: {
+            type: String,
+        },
     },
   },
   {timestamps: true},
