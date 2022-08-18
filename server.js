@@ -144,7 +144,7 @@ io.on('connection',
                 console.log("no session id");
             } else {
                 console.log("joining " + roomName)
-                socket.join(roomName).then(console.log("joined the room hopefully"));
+                socket.join(roomName).then(()=>{console.log("joined the room hopefully")});
                 let socketRoomName = roomName
 
                 /*
