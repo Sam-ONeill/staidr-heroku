@@ -31,7 +31,7 @@ router.post('/add', async (req, res) => {
   const Original_message = req.body.Current_message;
   const Room_name = req.body.Room_name;
   const User = req.body.User;
-  const Avatar = req.body.avatar
+  const Avatar = req.body.avatar;
   const newMessage = new Message({
     Room_name,
     Edited_flag,
