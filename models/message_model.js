@@ -29,7 +29,7 @@ let messageSchema = new Schema(
         User_id: {
             type: mongoose.Schema.Types.ObjectId,
         },
-        avatar: {
+        Avatar: {
             type: String,
         },
     },
