@@ -22,7 +22,9 @@ mongoose
 //Setup routes to groups
 const groupRouter = require('./routes/groups');
 const messageRouter = require('./routes/messages');
-app.use('/messages',messageRouter)
+const userRouter = require('./routes/users');
+app.use('/users',userRouter);
+app.use('/messages',messageRouter);
 app.use('/groups', groupRouter);
 
 const Group = require('./models/groups_model');
