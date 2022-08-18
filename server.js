@@ -123,7 +123,7 @@ io.on('connection',
                 } else { // User has logged in before
                     const index = users.findIndex((item) => item.username === socketUserName);
                     console.log("test 2" + index);
-                    socket.emit('SessionData', {
+                    socket.emit('sessionData', {
                         sessionID: users[index].sessionID,
                         userID: users[index].userID,
                     });
