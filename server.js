@@ -144,7 +144,7 @@ io.on('connection',
                 console.log("no session id");
             } else {
                 console.log("joining " + roomName)
-                socket.join(roomName);
+                socket.join(roomName).then(console.log("joined the room hopefully"));
                 let socketRoomName = roomName
 
                 /*
@@ -163,6 +163,15 @@ io.on('connection',
                     userID: userID,
                     username: userName,
                     connected: true,
+                });
+                socket.to(roomName).emit("test-socket-emit", {
+                    sessionID,
+                    userID,
+                });
+                // sends to all including sender
+                io.in(roomName).emit("test-io-emit", {
+                    sessionID,
+                    userID,
                 });
 
                 console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
