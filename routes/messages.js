@@ -4,8 +4,7 @@ const router = require('express').Router();
 const Message= require('../models/message_model');
 mongoose.set('debug', true);
 router.get('/', async (req, res) => {
-  const messages = await Message.find(
-      {"Room_name": "Apple"});
+  const messages = await Message.find();
   try {
     res.send(messages);
   } catch (err) {
