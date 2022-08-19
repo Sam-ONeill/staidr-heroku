@@ -60,6 +60,7 @@ const io = SocketIO(server);
 
 const users = [];
 
+
 // check if user has access to their userid & has logged in before
 // if they have reassign them there userid and session set connected to true
 // else create a user in session store
