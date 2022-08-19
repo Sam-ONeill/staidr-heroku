@@ -13,8 +13,9 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:Room_name', async (req, res) => {
+
   const messages = await Message.find(
-      {"Room_name": req.body.Room_name});
+      {"Room_name": req.params.Room_name});
   try {
     res.send(messages);
   } catch (err) {
