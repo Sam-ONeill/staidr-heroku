@@ -3,6 +3,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const SocketIO = require('socket.io');
 require('dotenv').config();
+const socketManage = require('./socketManage')
+
 
 const port = process.env.PORT || 4000;
 const INDEX = '/index.html';
@@ -34,6 +36,7 @@ const {InMemorySessionStore} = require('./sessionStore');
 const sessionStore = new InMemorySessionStore();
 const crypto = require("crypto");
 const {disconnect} = require("mongoose");
+const methods = require("./methods");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 let session;
 
@@ -59,7 +62,39 @@ const io = SocketIO(server);
 
 
 const users = [];
+/*
 
+
+
+Test area
+
+
+
+ */
+
+
+const test = ()=>{
+    methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
+    console.log("testting herer");}
+test();
+
+io.on('connection',socketManage)
+
+/*
+
+
+
+
+
+
+Test area end
+
+
+
+
+
+
+ */
 
 // check if user has access to their userid & has logged in before
 // if they have reassign them there userid and session set connected to true
