@@ -23,6 +23,7 @@ module.exports = io => socket => {
     })
 
     socket.on(events.INIT_MESSAGES,(groupName,chatName,cb)=>{
+        console.log("jsut cehcking "+methods.getPastMessages(groupName, chatName))
         socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
     })
 

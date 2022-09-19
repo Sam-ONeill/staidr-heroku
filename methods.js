@@ -47,6 +47,7 @@ async function getPastMessages (groupName, chatName)
             .limit(10);
         try {
             return recentMessages
+
         } catch (err){
             console.log("messages"+ err)
         }
