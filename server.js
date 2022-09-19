@@ -37,6 +37,7 @@ const sessionStore = new InMemorySessionStore();
 const crypto = require("crypto");
 const {disconnect} = require("mongoose");
 const methods = require("./methods");
+const events = require("./events");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 let session;
 
@@ -73,12 +74,12 @@ Test area
  */
 
 
-// const test = ()=>{
-//     methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
-//     console.log("testting herer");}
-// test();
+const test = ()=>{
+    methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
+    console.log("testting herer");}
+test();
 
-io.on('connection',socketManage)
+//io.on('connection',socketManage)
 
 /*
 
@@ -132,7 +133,7 @@ getAllSessions();
 console.log("at beginning" + JSON.stringify(users));
 console.log("amount" + users.length);
 
-/*
+
 //User based functions
 io.on('connection',
     (socket) => {
@@ -141,7 +142,10 @@ io.on('connection',
             console.log(event, args);
         });
 
-
+        socket.on(events.INIT_MESSAGES,(groupName,chatName) => {
+            console.log("jsut cehcking "+ groupName+ chatName +methods.getPastMessages(groupName, chatName));
+            socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
+        })
         //check if user has signed in before
         socket.on('username', (username) => {
 
@@ -295,6 +299,6 @@ io.on('connection',
         });
     });
 
-*/
+
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
