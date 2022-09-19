@@ -3,7 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const SocketIO = require('socket.io');
 require('dotenv').config();
-const socketManage = require('./socketManage')
+const socketManage = require('./socketManage');
 
 
 const port = process.env.PORT || 4000;
@@ -73,10 +73,10 @@ Test area
  */
 
 
-const test = ()=>{
-    methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
-    console.log("testting herer");}
-test();
+// const test = ()=>{
+//     methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
+//     console.log("testting herer");}
+// test();
 
 io.on('connection',socketManage)
 
