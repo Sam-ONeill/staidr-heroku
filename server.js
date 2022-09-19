@@ -132,7 +132,7 @@ getAllSessions();
 console.log("at beginning" + JSON.stringify(users));
 console.log("amount" + users.length);
 
-
+/*
 //User based functions
 io.on('connection',
     (socket) => {
@@ -295,6 +295,6 @@ io.on('connection',
         });
     });
 
-
+*/
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
