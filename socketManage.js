@@ -23,7 +23,7 @@ module.exports = io => socket => {
     })
 
     socket.on(events.INIT_MESSAGES,(groupName,chatName,cb)=>{
-        cb(methods.getPastMessages(groupName, chatName).then(r => console.log(r)));
+        socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
     })
 
     socket.on( events.LOGOUT, () => {
