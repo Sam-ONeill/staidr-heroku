@@ -41,21 +41,23 @@ const createMessage = ( message, sender ) => ({
 async function getPastMessages (groupName, chatName)
 {
 
-    const group = await groupModel.findOne({"Name":groupName});
-    try {
-        const recentMessages = await messageModel.find({Group_id: group._id,Room_name: chatName}).sort({_id:-1})
-            .limit(10).then(result => {
-                try {
-                    return result;
+    const group = await groupModel.findOne({"Name":groupName}).then( async result => {
+        try {
+            const recentMessages = await messageModel.find({Group_id: group._id, Room_name: chatName}).sort({_id: -1})
+                .limit(10).then(result => {
+                    try {
+                        return result;
 
-                } catch (err){
-                    console.log("messages"+ err)
-                }
-            });
+                    } catch (err) {
+                        console.log("messages" + err)
+                    }
+                });
 
-    } catch (err) {
-        console.log("Groups" + err);
-    }
+        } catch (err) {
+            console.log("Groups" + err);
+        }
+    });
+
 
 
 }
