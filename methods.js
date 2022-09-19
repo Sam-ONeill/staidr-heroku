@@ -44,13 +44,15 @@ async function getPastMessages (groupName, chatName)
     const group = await groupModel.findOne({"Name":groupName});
     try {
         const recentMessages = await messageModel.find({Group_id: group._id,Room_name: chatName}).sort({_id:-1})
-            .limit(10);
-        try {
-            return recentMessages
+            .limit(10).then(result => {
+                try {
+                    return result;
 
-        } catch (err){
-            console.log("messages"+ err)
-        }
+                } catch (err){
+                    console.log("messages"+ err)
+                }
+            });
+
     } catch (err) {
         console.log("Groups" + err);
     }
