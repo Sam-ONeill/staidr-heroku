@@ -22,8 +22,8 @@ module.exports = io => socket => {
         cb(chats)
     })
 
-    socket.on(events.INIT_MESSAGES,(groupName,chatName,cb)=>{
-        console.log("jsut cehcking "+methods.getPastMessages(groupName, chatName))
+    socket.on(events.INIT_MESSAGES,(groupName,chatName) => {
+        console.log("jsut cehcking "+ groupName+ chatName +methods.getPastMessages(groupName, chatName));
         socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
     })
 
