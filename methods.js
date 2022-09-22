@@ -41,7 +41,7 @@ function getPastMessages (groupName, chatName)
 {
     axios.get('http://staidr-heroku.herokuapp.com/groups/'+groupName).then(res =>{
         let groupID= res.data[0]._id;
-        axios.get('http://staidr-heroku.herokuapp.com/messages/'+groupID.toString()+'/'+chatName).then(res => {
+        axios.get('http://staidr-heroku.herokuapp.com/messages/'+groupID+'/'+chatName).then(res => {
            return res.data;
         })
     })

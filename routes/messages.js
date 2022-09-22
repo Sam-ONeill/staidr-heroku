@@ -92,10 +92,12 @@ router.patch('/update/:id', async (req, res) => {
 
 // Gets last 10 messages in a chat
 router.get('/:Group_id/:Room_name', async (req, res) => {
+  console.log("group ID " +req.params.Group_id);
+  console.log("group ID " +req.params.Group_id.toString());
 
 
   const messages = await Message.find(
-      {"Group_id": req.params.Group_id, "Room_name": req.params.Room_name}).sort({_id: -1})
+      {"Group_id": req.params.Group_id.toString(), "Room_name": req.params.Room_name}).sort({_id: -1})
       .limit(10);
   try {
     res.send(messages);
