@@ -97,7 +97,7 @@ router.get('/:Group_id/:Room_name', async (req, res) => {
 
 
   const messages = await Message.find(
-      {"Group_id": req.params.Group_id.toString(), "Room_name": req.params.Room_name}).sort({_id: -1})
+      {"Group_id":"62e2a4e91e36529e05c90185", "Room_name": req.params.Room_name}).sort({_id: -1})
       .limit(10);
   try {
     res.send(messages);
