@@ -39,8 +39,11 @@ const createMessage = ( message, sender ) => ({
 
 function getPastMessages (groupName, chatName)
 {
-    axios.get('http://localhost/4000/groups/'+groupName).then(res =>{
-        console.log(res.data);
+    axios.get('http://localhost:4000/groups/'+groupName).then(res =>{
+        let groupID= res.data[0]._id;
+        axios.get('http://localhost:4000/messages/'+groupID+'/'+chatName).then(res => {
+           return res.data;
+        })
     })
 }
 module.exports = {

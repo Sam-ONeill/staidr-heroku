@@ -74,6 +74,14 @@ Test area
  */
 
 
+const test = ()=>{
+    setTimeout(function () {
+        // ...
+    }, 10000);
+    methods.getPastMessages("CS620C", "Niamh");
+    console.log("testting herer");}
+test();
+
 //io.on('connection',socketManage)
 
 /*
