@@ -89,4 +89,24 @@ router.patch('/update/:id', async (req, res) => {
   }
 });
 
+
+// Gets last 10 messages in a chat
+router.get('/:Group_id/:Room_name', async (req, res) => {
+
+
+  const messages = await Message.find(
+      {"Group_id": req.params.Group_id, "Room_name": req.params.Room_name}).sort({_id: -1})
+      .limit(10);
+  try {
+    res.send(messages);
+  }
+  catch (err){
+    res.status(400).send(err);
+  }
+
+
+
+});
+
+
 module.exports = router;

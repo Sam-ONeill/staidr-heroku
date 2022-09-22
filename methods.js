@@ -2,9 +2,8 @@ const uuid = require('uuidv4')
 const mongoose = require("mongoose");
 const messageModel = require("./models/message_model");
 const groupModel = require("./models/groups_model");
-
+const axios = require("axios");
 const {ObjectId} = require("mongodb");
-
 const isUser = ( users, nickname ) => nickname in users
 
 const createUser = ( nickname, socketId ) => ({ nickname, socketId })
@@ -38,28 +37,11 @@ const createMessage = ( message, sender ) => ({
     sender
 })
 
-async function getPastMessages (groupName, chatName)
+function getPastMessages (groupName, chatName)
 {
-
-    const group = await groupModel.findOne({"Name":groupName}).then( async result => {
-        try {
-            const recentMessages = await messageModel.find({Group_id: group._id, Room_name: chatName}).sort({_id: -1})
-                .limit(10).then(result => {
-                    try {
-                        return result;
-
-                    } catch (err) {
-                        console.log("messages" + err)
-                    }
-                });
-
-        } catch (err) {
-            console.log("Groups" + err);
-        }
-    });
-
-
-
+    axios.get('http://localhost/4000/groups/'+groupName).then(res =>{
+        console.log(res.data);
+    })
 }
 module.exports = {
     isUser,

@@ -74,11 +74,6 @@ Test area
  */
 
 
-const test = ()=>{
-    methods.getPastMessages("CS620C", "Niamh").then(r => console.log(r));
-    console.log("testting herer");}
-test();
-
 //io.on('connection',socketManage)
 
 /*
