@@ -69,11 +69,6 @@ const users = [];
 
 Test area
 
-
-
- */
-
-
 const test = ()=>{
     setTimeout(function () {
         // ...
@@ -81,6 +76,11 @@ const test = ()=>{
     methods.getPastMessages("CS620C", "Niamh");
     console.log("testting herer");}
 test();
+
+ */
+
+
+
 
 //io.on('connection',socketManage)
 
