@@ -39,9 +39,9 @@ const createMessage = ( message, sender ) => ({
 
 function getPastMessages (groupName, chatName)
 {
-    axios.get('http://localhost:4000/groups/'+groupName).then(res =>{
+    axios.get('http://staidr-heroku.herokuapp.com/groups/'+groupName).then(res =>{
         let groupID= res.data[0]._id;
-        axios.get('http://localhost:4000/messages/'+groupID+'/'+chatName).then(res => {
+        axios.get('http://staidr-heroku.herokuapp.com/messages/'+groupID+'/'+chatName).then(res => {
            return res.data;
         })
     })
