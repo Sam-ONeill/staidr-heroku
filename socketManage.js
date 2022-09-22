@@ -1,5 +1,6 @@
 const events = require('./events')
 const methods = require('./methods')
+const {response} = require("express");
 let users = {}
 let chatsList = ['Global']
 let Global = methods.createChat({ name: 'Global' })
@@ -24,6 +25,9 @@ module.exports = io => socket => {
 
     socket.on(events.INIT_MESSAGES,async (groupName, chatName) => {
         console.log("jsut cehcking " + groupName + chatName + await methods.getPastMessages(groupName, chatName));
+        await methods.getPastMessages(groupName, chatName).then(data =>{
+            console.log("just checking " + response.json({ message: 'Request received!', data }));
+        })
         socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
     })
 
