@@ -40,8 +40,7 @@ const createMessage = ( message, sender ) => ({
     message,
     sender
 })
-
-const getPastMessages=(groupName, chatName)=> (
+const getPastMessages=(groupName, chatName)=> {
     /*
     await axios.get('http://staidr-heroku.herokuapp.com/groups/' + groupName).then(async res => {
         let groupID = res.data[0]._id;
@@ -51,14 +50,19 @@ const getPastMessages=(groupName, chatName)=> (
     })
     */
     // call router for groups .then call router for messages return those back
-    app.get('http://staidr-heroku.herokuapp.com/groups/' + groupName,(req,res) => {
-        res.send("hello world");
+    console.log("numero 1");
+
+app.get('http://staidr-heroku.herokuapp.com/groups/' + groupName,(req,res) => {
+        console.log("numero 2");
         console.log(res);
+
+        res.send("hello world");
         return res;
-    })
+
+});
+}
 
 
-)
 
 module.exports = {
     isUser,
