@@ -146,7 +146,7 @@ io.on('connection',
         });
 
         socket.on(events.INIT_MESSAGES,(groupName,chatName) => {
-            console.log("jsut cehcking "+ groupName+ chatName +methods.getPastMessages(groupName, chatName));
+            console.log("just checking "+ groupName+ chatName +methods.getPastMessages(groupName, chatName));
             socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
         })
         //check if user has signed in before

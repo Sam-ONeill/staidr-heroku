@@ -2,8 +2,12 @@ const uuid = require('uuidv4')
 const mongoose = require("mongoose");
 const messageModel = require("./models/message_model");
 const groupModel = require("./models/groups_model");
-const axios = require("axios");
 const {ObjectId} = require("mongodb");
+const groupRouter = require('./routes/groups');
+const express = require("express");
+const app = express();
+app.use('/groups', groupRouter);
+
 const isUser = ( users, nickname ) => nickname in users
 
 const createUser = ( nickname, socketId ) => ({ nickname, socketId })
@@ -37,14 +41,24 @@ const createMessage = ( message, sender ) => ({
     sender
 })
 
-async function getPastMessages(groupName, chatName) {
+const getPastMessages=(groupName, chatName)=> (
+    /*
     await axios.get('http://staidr-heroku.herokuapp.com/groups/' + groupName).then(async res => {
         let groupID = res.data[0]._id;
-        await axios.get('http://staidr-heroku.herokuapp.com/messages/' + groupID + '/' + chatName).then(res => {
-            return res.data;
+        await axios.get('http://staidr-heroku.herokuapp.com/messages/' + groupID + '/' + chatName).then(async res => {
+            return await res.data;
         })
     })
-}
+    */
+    // call router for groups .then call router for messages return those back
+    app.get('http://staidr-heroku.herokuapp.com/groups/' + groupName,(req,res) => {
+        res.send("hello world");
+        console.log(res);
+    })
+
+
+)
+
 module.exports = {
     isUser,
     createUser,

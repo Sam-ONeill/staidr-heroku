@@ -25,7 +25,7 @@ module.exports = io => socket => {
 
     socket.on(events.INIT_MESSAGES,async (groupName, chatName) => {
         console.log("jsut cehcking " + groupName + chatName + await methods.getPastMessages(groupName, chatName));
-        await methods.getPastMessages(groupName, chatName).then(data =>{
+        methods.getPastMessages(groupName, chatName).then(data =>{
             console.log("just checking " + response.json({ message: 'Request received!', data }));
         })
         socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
