@@ -133,8 +133,8 @@ function getAllSessions() {
 }
 
 getAllSessions();
-console.log("at beginning" + JSON.stringify(users));
-console.log("amount" + users.length);
+//console.log("at beginning" + JSON.stringify(users));
+//console.log("amount" + users.length);
 
 
 //User based functions
@@ -156,7 +156,7 @@ io.on('connection',
             socketUserName = username;
 
             if (socketUserName != null) {
-                console.log("test 1" + users.find(user => user.username === socketUserName));
+                //console.log("test 1" + users.find(user => user.username === socketUserName));
                 if (users.find(user => user.username === socketUserName) === undefined) { // User has not logged in before
                     socket.sessionID = randomId();
                     socket.userID = randomId();
@@ -167,7 +167,7 @@ io.on('connection',
                     });
                 } else { // User has logged in before
                     const index = users.findIndex((item) => item.username === socketUserName);
-                    console.log("test 2" + index);
+                   // console.log("test 2" + index);
                     socket.emit('sessionData', {
                         sessionID: users[index].sessionID,
                         userID: users[index].userID,
@@ -188,9 +188,9 @@ io.on('connection',
             if (!sessionID) {
                 console.log("no session id");
             } else {
-                console.log("joining " + roomName)
+                //console.log("joining " + roomName)
                 socket.join(roomName)
-                console.log("joined the room hopefully");
+                //console.log("joined the room hopefully");
                 let socketRoomName = roomName
 
                 /*
@@ -220,7 +220,7 @@ io.on('connection',
                     userID,
                 });
 
-                console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
+                //console.log(`socket ${userID} has joined room ${socketRoomName} under username ${userName}`);
                 //increase active users in room by 1
              Group.findOneAndUpdate({
                     "Name": socketGroupName,
@@ -258,7 +258,7 @@ io.on('connection',
                 username: userName,
                 connected: false,
             });
-            console.log(socketGroupName+ socketRoomName);
+            //console.log(socketGroupName+ socketRoomName);
             Group.findOneAndUpdate({
                 "Name": socketGroupName,
                 "Rooms.Room_name": socketRoomName

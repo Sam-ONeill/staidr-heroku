@@ -54,6 +54,7 @@ const getPastMessages=(groupName, chatName)=> (
     app.get('http://staidr-heroku.herokuapp.com/groups/' + groupName,(req,res) => {
         res.send("hello world");
         console.log(res);
+        return res;
     })
 
 
