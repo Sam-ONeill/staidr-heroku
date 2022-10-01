@@ -53,11 +53,14 @@ const getPastMessages=(groupName, chatName)=> {
     console.log("numero 1");
 
 app.get('http://staidr-heroku.herokuapp.com/groups/' + groupName,(req,res) => {
-        console.log("numero 2");
         console.log(res);
 
         res.send("hello world");
-        return res;
+
+}).then((res) => {
+    console.log("numero 3");
+
+    return res;
 
 });
 }
