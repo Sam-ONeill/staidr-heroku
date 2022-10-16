@@ -144,7 +144,7 @@ io.on('connection', socket=>{
     });
     socket.on( events.MESSAGE_SEND, (channel, msg ) => {
         //let message = methods.createMessage( msg, socket.user.nickname )
-        io.emit( events.MESSAGE_SEND, channel, msg )
+        io.to(channel).emit( events.MESSAGE_SEND, channel, msg )
 
     })
 });
