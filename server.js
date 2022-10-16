@@ -175,10 +175,10 @@ io.on('connection', socketManage)
                 }
             }
         });
-        /*
+
         If i set the session on the group screen
          the client should be able to access that from any group
-         */
+
 
         socket.on("join-room", (roomName, userName, sessionID, userID) => {
 
@@ -198,7 +198,7 @@ io.on('connection', socketManage)
                     sessionID: sessionID,
                     userID: userID,
                 });
-                */
+
                 getAllSessions();
 
                 socket.emit("users", users);
@@ -279,7 +279,7 @@ io.on('connection', socketManage)
 
             io.in(socketRoomName).allSockets().then(result => {
                 console.log("num in room " + result.size)
-            }) */
+            })
 
         });
 
