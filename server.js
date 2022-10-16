@@ -142,10 +142,10 @@ io.on('connection', socket=>{
     socket.onAny((event, ...args) => {
         console.log("on Any Listener ",event, args);
     });
-    socket.on( events.MESSAGE_SEND, ({ channel, msg }) => {
+    socket.on( events.MESSAGE_SEND, (channel, msg ) => {
         io.emit('Received')
         //let message = methods.createMessage( msg, socket.user.nickname )
-        io.emit( events.MESSAGE_SEND, ({ channel, msg }))
+        io.emit( events.MESSAGE_SEND, (channel, msg ))
 
     })
 });
