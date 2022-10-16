@@ -7,6 +7,9 @@ let Global = methods.createChat({ name: 'Global' })
 let chats = [Global]
 
 module.exports = io => socket => {
+    socket.onAny((event, ...args) => {
+        console.log("on Any Listener ",event, args);
+    });
 
     socket.on( events.IS_USER, ( nickname, cb ) => {
         methods.isUser( users, nickname ) ? cb({ isUser: true, user: null }) :
@@ -45,7 +48,6 @@ module.exports = io => socket => {
 
     socket.on( events.MESSAGE_SEND, ({ channel, msg }) => {
         io.emit('Received')
-        console.log("sdadasd");
         let message = methods.createMessage( msg, socket.user.nickname )
         io.emit( events.MESSAGE_SEND, ({ channel, message }))
         //console.log(channel);

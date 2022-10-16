@@ -138,17 +138,15 @@ getAllSessions();
 
 
 //User based functions
-io.on('connection',
+io.on('connection', socketManage)
+
+    /*
     (socket) => {
         //print all events to console
         socket.onAny((event, ...args) => {
             console.log(event, args);
         });
 
-        socket.on(events.INIT_MESSAGES,(groupName,chatName) => {
-            console.log("just checking "+ groupName+ chatName +methods.getPastMessages(groupName, chatName));
-            socket.emit(events.INIT_MESSAGES, methods.getPastMessages(groupName, chatName));
-        })
         //check if user has signed in before
         socket.on('username', (username) => {
 
@@ -301,7 +299,7 @@ io.on('connection',
             }
         });
     });
-
+*/
 
 //setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //node_server.listen(process.env.PORT);
