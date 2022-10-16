@@ -44,6 +44,8 @@ module.exports = io => socket => {
     })
 
     socket.on( events.MESSAGE_SEND, ({ channel, msg }) => {
+        io.emit('Received')
+        console.log("sdadasd");
         let message = methods.createMessage( msg, socket.user.nickname )
         io.emit( events.MESSAGE_SEND, ({ channel, message }))
         //console.log(channel);
