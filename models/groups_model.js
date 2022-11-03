@@ -36,6 +36,23 @@ const groupSchema = new Schema(
           User_id: {
             bsonType: 'objectId',
           },
+            User_name:{
+              type: String
+            },
+            MemberOfRooms: {
+                type: Array,
+                items: {
+                    type: Object,
+                    properties: {
+                        Active_users: {
+                            type: Int32,
+                        },
+                        Room_name: {
+                            type: String,
+                        },
+                    },
+                },
+            },
         },
       },
     },
